@@ -91,7 +91,7 @@
         </div>
       </section>
 
-      <!-- CLIENTES - TABELA MELHORADA MOBILE -->
+      <!-- CLIENTES -->
       <section id="clientes" class="section">
         <div class="card">
           <div class="section-header">
@@ -139,7 +139,100 @@
         </div>
       </section>
 
-      <!-- CONFIGURAÇÕES - COMPLETA -->
+      <!-- ORÇAMENTOS - CORRIGIDO -->
+      <section id="orcamentos" class="section">
+        <div class="card">
+          <div class="section-header">
+            <h2>Orçamentos</h2>
+            <button class="btn btn-primary" onclick="openModal('orcamentoModal')">+ Novo Orçamento</button>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-mobile">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Valor</th>
+                  <th>Data</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td data-label="Cliente">João Silva</td>
+                  <td data-label="Valor">R$ 2.500</td>
+                  <td data-label="Data">25/12/2025</td>
+                  <td data-label="Status"><span class="badge badge-success">Aprovado</span></td>
+                  <td data-label="Ações">
+                    <button class="btn-small btn-blue">Editar</button>
+                    <button class="btn-small btn-danger">Excluir</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td data-label="Cliente">Maria Santos</td>
+                  <td data-label="Valor">R$ 1.800</td>
+                  <td data-label="Data">28/12/2025</td>
+                  <td data-label="Status"><span class="badge badge-muted">Pendente</span></td>
+                  <td data-label="Ações">
+                    <button class="btn-small btn-blue">Editar</button>
+                    <button class="btn-small btn-danger">Excluir</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SERVIÇOS - CORRIGIDO -->
+      <section id="servicos" class="section">
+        <div class="card">
+          <div class="section-header">
+            <h2>Serviços Agendados</h2>
+            <button class="btn btn-primary" onclick="openModal('servicoModal')">+ Novo Serviço</button>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-mobile">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Serviço</th>
+                  <th>Data</th>
+                  <th>Horário</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td data-label="Cliente">João Silva</td>
+                  <td data-label="Serviço">Instalação Elétrica</td>
+                  <td data-label="Data">30/12/2025</td>
+                  <td data-label="Horário">14:00</td>
+                  <td data-label="Status"><span class="badge badge-success">Confirmado</span></td>
+                  <td data-label="Ações">
+                    <button class="btn-small btn-blue">Editar</button>
+                    <button class="btn-small btn-danger">Cancelar</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td data-label="Cliente">Maria Santos</td>
+                  <td data-label="Serviço">Manutenção</td>
+                  <td data-label="Data">02/01/2026</td>
+                  <td data-label="Horário">09:00</td>
+                  <td data-label="Status"><span class="badge badge-muted">Agendado</span></td>
+                  <td data-label="Ações">
+                    <button class="btn-small btn-blue">Editar</button>
+                    <button class="btn-small btn-danger">Cancelar</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONFIGURAÇÕES -->
       <section id="config" class="section">
         <div class="card">
           <div class="section-header">
@@ -162,26 +255,6 @@
             <button class="btn btn-primary" onclick="updateAdmin()">Atualizar Credenciais</button>
           </div>
 
-          <!-- EMPRESA -->
-          <div class="config-section">
-            <h3>🏢 Dados da Empresa</h3>
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Nome</label>
-                <input type="text" value="Thiago Pires - Eletricista">
-              </div>
-              <div class="form-group">
-                <label>Telefone</label>
-                <input type="tel" value="(11) 99999-9999">
-              </div>
-              <div class="form-group">
-                <label>Email</label>
-                <input type="email" value="contato@thiagopires.com">
-              </div>
-            </div>
-            <button class="btn btn-primary">Salvar Empresa</button>
-          </div>
-
           <!-- RELATÓRIOS -->
           <div class="config-section">
             <h3>📊 Relatórios</h3>
@@ -194,28 +267,12 @@
               </div>
             </div>
           </div>
-
-          <!-- DASHBOARD -->
-          <div class="config-section">
-            <h3>📈 Configurar Dashboard</h3>
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Meta Mensal (R$)</label>
-                <input type="number" value="50000">
-              </div>
-              <div class="form-group">
-                <label>Meta Clientes</label>
-                <input type="number" value="300">
-              </div>
-            </div>
-            <button class="btn btn-primary">Atualizar Dashboard</button>
-          </div>
         </div>
       </section>
     </main>
   </div>
 
-  <!-- MODALS MOBILE OTIMIZADOS -->
+  <!-- MODALS -->
   <div id="clienteModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -243,7 +300,6 @@
     </div>
   </div>
 
-  <!-- outros modals... -->
   <div id="orcamentoModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -253,15 +309,63 @@
       <form id="orcamentoForm">
         <div class="form-group">
           <label>Cliente *</label>
-          <select name="cliente" required><option>Selecione</option><option>João Silva</option></select>
+          <select name="cliente" required>
+            <option value="">Selecione</option>
+            <option value="joao">João Silva</option>
+            <option value="maria">Maria Santos</option>
+          </select>
         </div>
         <div class="form-group">
-          <label>Valor *</label>
-          <input type="number" name="valor" required>
+          <label>Valor (R$) *</label>
+          <input type="number" name="valor" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label>Descrição</label>
+          <textarea name="descricao" rows="3"></textarea>
         </div>
         <div class="form-actions">
           <button type="button" class="btn" onclick="closeModal('orcamentoModal')">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Gerar</button>
+          <button type="submit" class="btn btn-primary">Gerar Orçamento</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="servicoModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>🔧 Novo Serviço</h3>
+        <button class="modal-close" onclick="closeModal('servicoModal')">&times;</button>
+      </div>
+      <form id="servicoForm">
+        <div class="form-group">
+          <label>Cliente *</label>
+          <select name="cliente" required>
+            <option value="">Selecione</option>
+            <option value="joao">João Silva</option>
+            <option value="maria">Maria Santos</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Tipo de Serviço *</label>
+          <select name="tipo" required>
+            <option value="">Selecione</option>
+            <option value="instalacao">Instalação Elétrica</option>
+            <option value="manutencao">Manutenção</option>
+            <option value="reparo">Reparo</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Data *</label>
+          <input type="date" name="data" required>
+        </div>
+        <div class="form-group">
+          <label>Horário *</label>
+          <input type="time" name="horario" required>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn" onclick="closeModal('servicoModal')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Agendar Serviço</button>
         </div>
       </form>
     </div>
@@ -279,8 +383,10 @@
           this.classList.add('active');
           document.getElementById(this.dataset.section).classList.add('visible');
           document.getElementById('pageTitle').textContent = {
-            'dashboard': 'Dashboard', 'clientes': 'Clientes', 
-            'orcamentos': 'Orçamentos', 'servicos': 'Serviços', 
+            'dashboard': 'Dashboard', 
+            'clientes': 'Clientes', 
+            'orcamentos': 'Orçamentos', 
+            'servicos': 'Serviços', 
             'config': 'Configurações'
           }[this.dataset.section] || 'Painel';
         });
