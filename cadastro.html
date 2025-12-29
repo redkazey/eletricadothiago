@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -6,20 +7,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="bg-gradient">
+<body>
   <div class="app-container">
-    <header class="top-bar">
-      <span class="brand">Cadastro Cliente</span>
-      <a href="index.html" class="link-button">← Voltar</a>
+    <!-- HEADER CENTRALIZADO - TÍTULO + BOTÃO VOLTAR -->
+    <header class="cadastro-header">
+      <div class="header-content">
+        <div class="icon-bolt-large">⚡</div>
+        <h1 class="titulo-cadastro">Cadastro de Cliente</h1>
+        <a href="index.html" class="btn-voltar-home">← Voltar ao Home</a>
+      </div>
     </header>
+
     <main class="center-wrapper">
-      <section class="card">
-        <div class="card-header">
-          <div class="icon-bolt">⚡</div>
-          <h1>Crie sua conta</h1>
-        </div>
+      <section class="card cadastro-card">
         <form id="cadastroForm" class="card-body">
-          <!-- Todos os campos que você pediu: nome, CPF, tel, email, CEP, etc. -->
           <div class="form-group"><label>Nome completo</label><input id="nome" required></div>
           <div class="form-group"><label>CPF</label><input id="cpf" required maxlength="14"></div>
           <div class="form-group"><label>Telefone</label><input id="telefone" required maxlength="15"></div>
@@ -37,6 +38,7 @@
       </section>
     </main>
   </div>
+
   <script src="assets/js/utils.js"></script>
   <script src="assets/js/api.js"></script>
   <script src="assets/js/auth.js"></script>
