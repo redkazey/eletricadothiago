@@ -307,7 +307,7 @@ input:focus, textarea:focus {
 
 .input-wrapper {
   position: relative;
-  margin-bottom: 24px;
+  margin-bottom: 16px; /* REDUZIDO */
 }
 
 .input-wrapper input {
@@ -315,7 +315,7 @@ input:focus, textarea:focus {
   background: #1a1a25;
   border: 1px solid #2a2a35;
   border-radius: 6px;
-  padding: 24px 16px 24px 16px;
+  padding: 24px 16px;
   color: #ffffff;
   font-size: 16px;
   font-weight: 400;
@@ -389,7 +389,7 @@ input:focus, textarea:focus {
   background: linear-gradient(135deg, #00ff88, #0099ff);
   border: none;
   border-radius: 6px;
-  padding: 24px 32px;
+  padding: 20px 32px; /* REDUZIDO padding vertical */
   color: #0a0a0f;
   font-size: 16px;
   font-weight: 600;
@@ -398,6 +398,7 @@ input:focus, textarea:focus {
   position: relative;
   overflow: hidden;
   margin-bottom: 24px;
+  margin-top: 4px; /* ESPAÇO MÍNIMO do botão */
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -451,7 +452,7 @@ input:focus, textarea:focus {
   position: relative;
   z-index: 1;
   visibility: hidden;
-  width: 40px; /* Mantém espaço exato */
+  width: 40px;
   height: 20px;
   display: inline-block;
 }
@@ -534,13 +535,15 @@ input:focus, textarea:focus {
   66% { transform: translateY(10px) translateX(-10px); }
 }
 
-/* RESPONSIVO */
+/* RESPONSIVO - ESPAÇAMENTO PERFEITO */
 @media (max-width: 768px) {
   .cadastro-header { padding: 1.5rem 1rem; }
   .titulo-cadastro { font-size: 1.8rem; }
   .icon-bolt-large { width: 60px; height: 60px; font-size: 1.5rem; }
   .login-container { padding: 10px; }
   .login-card { padding: 24px; margin: 10px; }
+  .input-wrapper { margin-bottom: 20px; }
+  .login-btn { padding: 20px 24px; }
 }
 
 @media (max-width: 480px) {
