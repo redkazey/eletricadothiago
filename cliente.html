@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Painel Cliente - Thiago Pires</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-gradient">
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="brand">⚡ Thiago Pires</span>
+        <small id="clienteNome">Carregando...</small>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-section="servicos">🔧 Serviços</button>
+        <button class="nav-item" data-section="materiais">🛠 Materiais</button>
+        <button class="nav-item" data-section="meus-servicos">📋 Meus Serviços</button>
+        <button class="nav-item" data-section="meus-dados">👤 Meus Dados</button>
+      </nav>
+      <button class="btn btn-outline full mt-2" id="logoutBtn">Sair</button>
+    </aside>
+
+    <main class="main">
+      <header class="main-header">
+        <h1 id="tituloSecao">Serviços de Mão de Obra</h1>
+      </header>
+
+      <!-- Serviços -->
+      <section id="sec-servicos" class="section visible">
+        <div id="listaServicos" class="grid-cards">
+          <p>Carregando serviços...</p>
+        </div>
+      </section>
+
+      <!-- Materiais -->
+      <section id="sec-materiais" class="section">
+        <div id="listaMateriais" class="grid-cards">
+          <p>Carregando materiais...</p>
+        </div>
+      </section>
+
+      <!-- Meus Serviços -->
+      <section id="sec-meus-servicos" class="section">
+        <div id="historicoAgendamentos" class="grid-cards">
+          <p>Carregando agendamentos...</p>
+        </div>
+      </section>
+
+      <!-- Meus Dados -->
+      <section id="sec-meus-dados" class="section">
+        <div class="card inner">
+          <h2>Meus Dados</h2>
+          <form id="formMeusDados">
+            <div class="form-group">
+              <label for="md_nome">Nome completo</label>
+              <input id="md_nome" required>
+            </div>
+            <div class="form-group">
+              <label for="md_telefone">Telefone</label>
+              <input id="md_telefone">
+            </div>
+            <div class="form-group">
+              <label for="md_observacao">Observação</label>
+              <textarea id="md_observacao" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary full">Salvar Dados</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Finalizar Pedido (aparece com carrinho cheio) -->
+      <section id="sec-finalizar" class="section">
+        <div class="card inner">
+          <h2>Finalizar Pedido</h2>
+          <div id="resumoCarrinho"></div>
+          <form id="formFinalizar">
+            <div class="form-group">
+              <label for="cupom">Cupom de desconto</label>
+              <input id="cupom" placeholder="ex: BEMVINDO10">
+            </div>
+            <div class="form-group">
+              <label for="cpfCupom">CPF para cupom</label>
+              <input id="cpfCupom" maxlength="14">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Data</label>
+                <input type="date" id="dataAgendamento" required>
+              </div>
+              <div class="form-group">
+                <label>Horário</label>
+                <input type="time" id="horaAgendamento" required>
+              </div>
+            </div>
+            <p class="alert">Para cancelamento, entre em contato até 24h antes.</p>
+            <button type="submit" class="btn btn-primary full">Enviar via WhatsApp</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/cliente.js"></script>
+</body>
+</html>
