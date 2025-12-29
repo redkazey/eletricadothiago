@@ -2,49 +2,222 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Thiago Pires - Eletricista</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="bg-gradient">
-  <div class="app-container">
-    <header class="top-bar">
-      <span class="brand">⚡ Thiago Pires</span>
-      <span class="subcode">Eletricista Profissional</span>
-    </header>
-
-    <main class="center-wrapper">
-      <section class="card login-card">
-        <div class="card-header">
-          <div class="icon-bolt">⚡</div>
-          <h1>Entrar</h1>
-          <p>Acesse sua conta</p>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="logo-icon">⚡</div>
+        <h2>Thiago Pires</h2>
+        <p>Acesse sua conta</p>
+      </div>
+      
+      <form class="login-form" id="loginForm" novalidate>
+        <div class="form-group">
+          <div class="input-wrapper">
+            <input type="email" id="loginEmail" name="email" required autocomplete="email">
+            <label for="loginEmail">Email</label>
+            <span class="input-line"></span>
+          </div>
+          <span class="error-message" id="emailError"></span>
         </div>
 
-        <form id="loginForm" class="card-body">
-          <div class="form-group">
-            <label for="loginEmail">Email</label>
-            <input id="loginEmail" type="email" required placeholder="admin@thiago22">
-          </div>
-          <div class="form-group">
+        <div class="form-group">
+          <div class="input-wrapper password-wrapper">
+            <input type="password" id="loginPassword" name="password" required autocomplete="current-password">
             <label for="loginPassword">Senha</label>
-            <div class="input-with-icon">
-              <input id="loginPassword" type="password" required placeholder="thiago22">
-              <button type="button" class="icon-button" id="togglePassword">👁</button>
-            </div>
+            <button type="button" class="password-toggle" id="passwordToggle" aria-label="Mostrar/esconder senha">
+              <span class="toggle-icon"></span>
+            </button>
+            <span class="input-line"></span>
           </div>
-          <button type="submit" class="btn btn-primary full">ENTRAR</button>
-          <div class="divider"><span>ou</span></div>
-          <button type="button" class="btn btn-outline full" onclick="location.href='cadastro.html'">
-            Novo? Cadastre-se
-          </button>
-        </form>
-      </section>
-    </main>
+          <span class="error-message" id="passwordError"></span>
+        </div>
+
+        <button type="submit" class="login-btn btn">
+          <span class="btn-text">ENTRAR</span>
+          <span class="btn-loader"></span>
+          <span class="btn-glow"></span>
+        </button>
+      </form>
+
+      <div class="divider">
+        <span>ou</span>
+      </div>
+
+      <div class="signup-link">
+        <p>Novo cliente? <a href="cadastro.html">Crie sua conta</a></p>
+      </div>
+
+      <div class="success-message" id="successMessage">
+        <div class="success-icon">✓</div>
+        <h3>Bem-vindo de volta!</h3>
+        <p>Redirecionando para seu painel...</p>
+      </div>
+    </div>
+    
+    <div class="background-effects">
+      <div class="glow-orb glow-orb-1"></div>
+      <div class="glow-orb glow-orb-2"></div>
+      <div class="glow-orb glow-orb-3"></div>
+    </div>
   </div>
 
+  <!-- SCRIPTS DO SISTEMA (mantidos) -->
   <script src="assets/js/utils.js"></script>
   <script src="assets/js/api.js"></script>
   <script src="assets/js/auth.js"></script>
+  
+  <!-- Script Neon adaptado para funcionar com auth.js -->
+  <script>
+    // LoginFormNeon - Adaptado para auth.js
+    class LoginFormNeon {
+      constructor() {
+        this.form = document.getElementById('loginForm');
+        this.submitBtn = this.form.querySelector('.login-btn');
+        this.passwordToggle = document.getElementById('passwordToggle');
+        this.successMessage = document.getElementById('successMessage');
+        this.isSubmitting = false;
+        
+        this.init();
+      }
+      
+      init() {
+        this.addEventListeners();
+        this.setupFloatingLabels();
+        this.setupPasswordToggle();
+        this.addAnimations();
+      }
+      
+      addEventListeners() {
+        // Submit interceptado pelo auth.js, mas com efeitos visuais
+        this.form.addEventListener('submit', (e) => {
+          if (this.isSubmitting) {
+            e.preventDefault();
+            return;
+          }
+          this.startLoading();
+        });
+        
+        // Password toggle
+        if (this.passwordToggle) {
+          this.passwordToggle.addEventListener('click', () => this.togglePassword());
+        }
+        
+        // Success state (chamado pelo auth.js)
+        window.addEventListener('loginSuccess', () => {
+          this.showSuccess();
+        });
+        
+        window.addEventListener('loginError', (e) => {
+          this.showError(e.detail.message);
+          this.stopLoading();
+        });
+      }
+      
+      setupFloatingLabels() {
+        const inputs = this.form.querySelectorAll('input');
+        inputs.forEach(input => {
+          if (input.value.trim() !== '') {
+            input.classList.add('has-value');
+          }
+          input.addEventListener('input', () => {
+            input.classList.toggle('has-value', input.value.trim() !== '');
+          });
+        });
+      }
+      
+      setupPasswordToggle() {
+        const passwordInput = document.getElementById('loginPassword');
+        if (this.passwordToggle && passwordInput) {
+          this.passwordToggle.addEventListener('click', () => {
+            const isPassword = passwordInput.type === 'password';
+            const toggleIcon = this.passwordToggle.querySelector('.toggle-icon');
+            
+            passwordInput.type = isPassword ? 'text' : 'password';
+            toggleIcon.classList.toggle('show-password', isPassword);
+            
+            this.passwordToggle.style.boxShadow = '0 0 15px rgba(0, 255, 136, 0.5)';
+            setTimeout(() => {
+              this.passwordToggle.style.boxShadow = '';
+            }, 300);
+          });
+        }
+      }
+      
+      startLoading() {
+        this.isSubmitting = true;
+        this.submitBtn.classList.add('loading');
+      }
+      
+      stopLoading() {
+        this.isSubmitting = false;
+        this.submitBtn.classList.remove('loading');
+      }
+      
+      togglePassword() {
+        // Já configurado no event listener acima
+      }
+      
+      showSuccess() {
+        this.form.style.opacity = '0';
+        this.form.style.transform = 'translateY(-20px) scale(0.95)';
+        
+        const elementsToHide = ['.divider', '.signup-link'];
+        elementsToHide.forEach(selector => {
+          const element = document.querySelector(selector);
+          if (element) {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(-20px)';
+          }
+        });
+        
+        setTimeout(() => {
+          this.form.style.display = 'none';
+          elementsToHide.forEach(selector => {
+            const element = document.querySelector(selector);
+            if (element) element.style.display = 'none';
+          });
+          
+          this.successMessage.classList.add('show');
+        }, 300);
+      }
+      
+      showError(message) {
+        const card = document.querySelector('.login-card');
+        card.style.animation = 'shake 0.5s ease-in-out';
+        card.style.boxShadow = '0 0 40px rgba(255, 0, 128, 0.5)';
+        
+        // Notificação já tratada pelo auth.js
+        setTimeout(() => {
+          card.style.animation = '';
+          card.style.boxShadow = '';
+        }, 500);
+      }
+      
+      addAnimations() {
+        const loginCard = document.querySelector('.login-card');
+        loginCard.style.opacity = '0';
+        loginCard.style.transform = 'translateY(30px) scale(0.9)';
+        
+        setTimeout(() => {
+          loginCard.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+          loginCard.style.opacity = '1';
+          loginCard.style.transform = 'translateY(0) scale(1)';
+        }, 200);
+      }
+    }
+    
+    // Inicializa quando DOM carregar (DEPOIS dos scripts do sistema)
+    document.addEventListener('DOMContentLoaded', () => {
+      // Aguarda auth.js carregar
+      setTimeout(() => {
+        new LoginFormNeon();
+      }, 100);
+    });
+  </script>
 </body>
 </html>
