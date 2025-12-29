@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Admin - Thiago Pires</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">Thiago Pires</div>
+        <small>Admin</small>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-section="dashboard">
+          <span>📊</span> Dashboard
+        </button>
+        <button class="nav-item" data-section="clientes">
+          <span>👥</span> Clientes
+        </button>
+        <button class="nav-item" data-section="orcamentos">
+          <span>💰</span> Orçamentos
+        </button>
+        <button class="nav-item" data-section="servicos">
+          <span>🔧</span> Serviços
+        </button>
+        <button class="nav-item" data-section="config">
+          <span>⚙️</span> Configurações
+        </button>
+      </nav>
+      
+      <button class="nav-item mt-2" onclick="logout()">
+        <span>🚪</span> Sair
+      </button>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+      <header class="main-header">
+        <h1>Painel Administrativo</h1>
+        <div class="user-info">
+          <span>Admin</span>
+          <button class="icon-button">👤</button>
+        </div>
+      </header>
+
+      <!-- DASHBOARD -->
+      <section id="dashboard" class="section visible">
+        <div class="grid-cards">
+          <div class="card">
+            <div class="card-list-item">
+              <div class="card-list-item-header">
+                <h3>Total Clientes</h3>
+                <div class="badge badge-success">247</div>
+              </div>
+              <p class="text-muted">+12 este mês</p>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-list-item">
+              <div class="card-list-item-header">
+                <h3>Orçamentos</h3>
+                <div class="badge badge-success">89</div>
+              </div>
+              <p class="text-muted">R$ 45.230 faturados</p>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-list-item">
+              <div class="card-list-item-header">
+                <h3>Serviços Agendados</h3>
+                <div class="badge badge-muted">23</div>
+              </div>
+              <p class="text-muted">Próximos 7 dias</p>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-list-item">
+              <div class="card-list-item-header">
+                <h3>Conversão</h3>
+                <div class="badge badge-success">78%</div>
+              </div>
+              <p class="text-muted">Orçamentos aprovados</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CLIENTES -->
+      <section id="clientes" class="section">
+        <div class="card">
+          <h2>Lista de Clientes</h2>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Email</th>
+                  <th>Telefone</th>
+                  <th>Último Serviço</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>João Silva</td>
+                  <td>joao@email.com</td>
+                  <td>(11) 99999-9999</td>
+                  <td>15/12/2025</td>
+                  <td><span class="badge badge-success">Ativo</span></td>
+                </tr>
+                <tr>
+                  <td>Maria Santos</td>
+                  <td>maria@email.com</td>
+                  <td>(11) 88888-8888</td>
+                  <td>20/12/2025</td>
+                  <td><span class="badge badge-success">Ativo</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- OUTRAS SEÇÕES (vazias por enquanto) -->
+      <section id="orcamentos" class="section">
+        <div class="card">
+          <h2>Orçamentos</h2>
+          <p>Em desenvolvimento...</p>
+        </div>
+      </section>
+
+      <section id="servicos" class="section">
+        <div class="card">
+          <h2>Serviços</h2>
+          <p>Em desenvolvimento...</p>
+        </div>
+      </section>
+
+      <section id="config" class="section">
+        <div class="card">
+          <h2>Configurações</h2>
+          <p>Em desenvolvimento...</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Navegação entre seções
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', function() {
+        const section = this.dataset.section;
+        
+        // Remove active de todos
+        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+        document.querySelectorAll('.section').forEach(sec => sec.classList.remove('visible'));
+        
+        // Adiciona active no clicado
+        this.classList.add('active');
+        document.getElementById(section).classList.add('visible');
+      });
+    });
+
+    // Logout
+    function logout() {
+      if(confirm('Deseja realmente sair?')) {
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Verifica se está logado
+    if(!localStorage.getItem('adminLoggedIn')) {
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>
