@@ -1,4 +1,4 @@
-/* Thiago Pires - Eletricista | Design igual ao print */
+/* Thiago Pires - Eletricista | CSS COMPLETO (Original + Neon Minimalist) */
 :root {
   --bg-main: #050816;
   --bg-card: #111827;
@@ -474,10 +474,7 @@ input:focus, textarea:focus {
 
 /* RESPONSIVO */
 @media (max-width: 1024px) {
-  .layout {
-    flex-direction: column;
-  }
-  
+  .layout { flex-direction: column; }
   .sidebar {
     width: 100%;
     height: auto;
@@ -485,51 +482,445 @@ input:focus, textarea:focus {
     overflow-x: auto;
     padding: 1rem;
   }
-  
-  .sidebar-nav {
-    flex-direction: row;
-    gap: 0.5rem;
-  }
-  
+  .sidebar-nav { flex-direction: row; gap: 0.5rem; }
   .nav-item {
     flex: 1;
     white-space: nowrap;
     text-align: center;
     padding: 0.75rem;
   }
-  
-  .main {
-    padding: 1.5rem;
-  }
+  .main { padding: 1.5rem; }
 }
 
 @media (max-width: 768px) {
-  .app-container {
-    padding: 0.75rem;
-  }
-  
-  .card {
-    padding: 1.5rem;
-    margin: 0.5rem;
-  }
-  
-  .main {
-    padding: 1rem;
-  }
-  
-  .form-row {
-    flex-direction: column;
-  }
-  
-  .grid-cards {
-    grid-template-columns: 1fr;
-  }
+  .app-container { padding: 0.75rem; }
+  .card { padding: 1.5rem; margin: 0.5rem; }
+  .main { padding: 1rem; }
+  .form-row { flex-direction: column; }
+  .grid-cards { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {
-  .top-bar {
-    flex-direction: column;
-    gap: 0.5rem;
-    text-align: center;
-  }
+  .top-bar { flex-direction: column; gap: 0.5rem; text-align: center; }
 }
+
+/* ========================================
+   NEON MINIMALIST - ADIÇÕES PARA INDEX.HTML
+   ======================================== */
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+  z-index: 10;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.login-card {
+  background: #151520;
+  border: 1px solid #2a2a35;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  position: relative;
+  backdrop-filter: blur(20px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #00ff88, transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.login-card:hover::before { opacity: 1; }
+
+.login-card:hover {
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(0, 255, 136, 0.1),
+    0 0 40px rgba(0, 255, 136, 0.1);
+  transform: translateY(-2px);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.logo-icon {
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #00ff88, #0099ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.3));
+  animation: pulse 2s ease-in-out infinite alternate;
+}
+
+.login-header h2 {
+  color: #ffffff;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+.login-header p {
+  color: #a0a0b0;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.input-wrapper {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.input-wrapper input {
+  width: 100%;
+  background: #1a1a25;
+  border: 1px solid #2a2a35;
+  border-radius: 6px;
+  padding: 24px 16px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 400;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+}
+
+.input-wrapper input:focus {
+  border-color: #00ff88;
+  background: rgba(26, 26, 37, 0.8);
+  box-shadow: 
+    0 0 0 3px rgba(0, 255, 136, 0.1),
+    0 4px 20px rgba(0, 255, 136, 0.1);
+}
+
+.input-wrapper label {
+  position: absolute;
+  left: 16px;
+  top: 24px;
+  color: #a0a0b0;
+  font-size: 16px;
+  font-weight: 400;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  transform-origin: left top;
+}
+
+.input-wrapper input:focus + label,
+.input-wrapper input:valid + label,
+.input-wrapper input.has-value + label {
+  transform: translateY(-32px) translateX(4px) scale(0.85);
+  color: #00ff88;
+  font-weight: 500;
+}
+
+.input-line {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00ff88, #0099ff);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-50%);
+  border-radius: 2px;
+}
+
+.input-wrapper input:focus ~ .input-line {
+  width: 100%;
+}
+
+.password-wrapper input {
+  padding-right: 50px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  color: #a0a0b0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 6px;
+}
+
+.password-toggle:hover {
+  color: #00ff88;
+  background: rgba(0, 255, 136, 0.1);
+}
+
+.toggle-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.login-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #00ff88, #0099ff);
+  border: none;
+  border-radius: 6px;
+  padding: 24px 32px;
+  color: #0a0a0f;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 24px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.login-btn .btn-glow {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.login-btn:hover .btn-glow {
+  left: 100%;
+}
+
+.login-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 10px 30px rgba(0, 255, 136, 0.3),
+    0 0 40px rgba(0, 255, 136, 0.2);
+}
+
+.login-btn:active {
+  transform: translateY(0);
+}
+
+.login-btn.loading {
+  pointer-events: none;
+}
+
+.btn-text {
+  transition: opacity 0.3s ease;
+}
+
+.btn-loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid #0a0a0f;
+  border-radius: 50%;
+  opacity: 0;
+  animation: spin 1s linear infinite;
+  transition: opacity 0.3s ease;
+}
+
+.login-btn.loading .btn-text {
+  opacity: 0;
+}
+
+.login-btn.loading .btn-loader {
+  opacity: 1;
+}
+
+.divider {
+  text-align: center;
+  margin: 32px 0 24px;
+  position: relative;
+}
+
+.divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #2a2a35, transparent);
+  transform: translateY(-50%);
+}
+
+.divider span {
+  background: #151520;
+  color: #a0a0b0;
+  padding: 0 24px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  position: relative;
+  z-index: 1;
+}
+
+.signup-link {
+  text-align: center;
+}
+
+.signup-link p {
+  color: #a0a0b0;
+  font-size: 14px;
+}
+
+.signup-link a {
+  color: #00ff88;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.signup-link a:hover {
+  color: #0099ff;
+  text-shadow: 0 0 10px rgba(0, 153, 255, 0.5);
+}
+
+.success-message {
+  display: none;
+  text-align: center;
+  padding: 40px 24px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.success-message.show {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.success-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #00ff88, #0099ff);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #0a0a0f;
+  margin: 0 auto 24px;
+  animation: successPulse 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+}
+
+.success-message h3 {
+  color: #ffffff;
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+
+.success-message p {
+  color: #a0a0b0;
+  font-size: 16px;
+}
+
+.background-effects {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 255, 136, 0.1), transparent 70%);
+  animation: float 6s ease-in-out infinite;
+}
+
+.glow-orb-1 {
+  width: 300px;
+  height: 300px;
+  top: 10%;
+  left: -10%;
+  background: radial-gradient(circle, rgba(0, 255, 136, 0.08), transparent 70%);
+  animation-delay: 0s;
+}
+
+.glow-orb-2 {
+  width: 200px;
+  height: 200px;
+  top: 60%;
+  right: -5%;
+  background: radial-gradient(circle, rgba(0, 153, 255, 0.06), transparent 70%);
+  animation-delay: -2s;
+}
+
+.glow-orb-3 {
+  width: 150px;
+  height: 150px;
+  bottom: 20%;
+  left: 10%;
+  background: radial-gradient(circle, rgba(255, 0, 128, 0.04), transparent 70%);
+  animation-delay: -4s;
+}
+
+/* ANIMAÇÕES NEON */
+@keyframes pulse {
+  from { filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.3)); }
+  to { filter: drop-shadow(0 0 30px rgba(0, 255, 136, 0.6)); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  33% { transform: translateY(-20px) translateX(10px); }
+  66% { transform: translateY(10px) translateX(-10px); }
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes successPulse {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* RESPONSIVO NEON */
+@media (max-width: 480px) {
+  .login-container { padding: 10px; }
+  .login-card { padding: 24px; margin: 10px; }
+  .login-header h2 { font-size: 1.75rem; }
+  .input-wrapper input { padding: 16px; }
+  .password-wrapper input { padding-right: 45px; }
+  .glow-orb { opacity: 0.5; }
+  }
