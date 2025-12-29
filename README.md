@@ -234,15 +234,15 @@ graph TD
 
 🔗 LINKS ÚTEIS
 
-Deploy Vercel  **************  vercel --prod
+Deploy Vercel vercel --prod
 
-Deploy Netlify **************  Drag & Drop pasta
+Deploy Netlify Drag & Drop pasta
 
-Editar CSS     **************  assets/css/style.css
+Editar CSS assets/css/style.css
 
-Teste Mobile   **************  Chrome DevTools
+Teste Mobile Chrome DevTools
 
-Limpar Login   **************  localStorage.clearLi
+Limpar Login localStorage.clearLi
 
 
 📞 CONTATO SUPORTE
