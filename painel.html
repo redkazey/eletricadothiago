@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -33,18 +34,19 @@
         </button>
       </nav>
       
-      <button class="nav-item mt-2" onclick="logout()">
-        <span>🚪</span> Sair
-      </button>
+      <div class="mt-2">
+        <button class="nav-item" onclick="logout()">
+          <span>🚪</span> Sair
+        </button>
+      </div>
     </aside>
 
     <!-- MAIN CONTENT -->
     <main class="main">
       <header class="main-header">
-        <h1>Painel Administrativo</h1>
+        <h1 id="pageTitle">Painel Administrativo</h1>
         <div class="user-info">
           <span>Admin</span>
-          <button class="icon-button">👤</button>
         </div>
       </header>
 
@@ -96,7 +98,10 @@
       <!-- CLIENTES -->
       <section id="clientes" class="section">
         <div class="card">
-          <h2>Lista de Clientes</h2>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h2>Lista de Clientes</h2>
+            <button class="btn btn-primary">+ Novo Cliente</button>
+          </div>
           <div class="table-responsive">
             <table class="table">
               <thead>
@@ -106,6 +111,7 @@
                   <th>Telefone</th>
                   <th>Último Serviço</th>
                   <th>Status</th>
+                  <th>Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -115,6 +121,10 @@
                   <td>(11) 99999-9999</td>
                   <td>15/12/2025</td>
                   <td><span class="badge badge-success">Ativo</span></td>
+                  <td>
+                    <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Editar</button>
+                    <button class="btn" style="background: var(--danger); color: white; padding: 0.25rem 0.5rem; font-size: 0.75rem; margin-left: 0.5rem;">Excluir</button>
+                  </td>
                 </tr>
                 <tr>
                   <td>Maria Santos</td>
@@ -122,6 +132,10 @@
                   <td>(11) 88888-8888</td>
                   <td>20/12/2025</td>
                   <td><span class="badge badge-success">Ativo</span></td>
+                  <td>
+                    <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Editar</button>
+                    <button class="btn" style="background: var(--danger); color: white; padding: 0.25rem 0.5rem; font-size: 0.75rem; margin-left: 0.5rem;">Excluir</button>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -129,57 +143,99 @@
         </div>
       </section>
 
-      <!-- OUTRAS SEÇÕES (vazias por enquanto) -->
+      <!-- ORÇAMENTOS -->
       <section id="orcamentos" class="section">
         <div class="card">
-          <h2>Orçamentos</h2>
-          <p>Em desenvolvimento...</p>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h2>Orçamentos</h2>
+            <button class="btn btn-primary">+ Novo Orçamento</button>
+          </div>
+          <p>Lista de orçamentos em desenvolvimento...</p>
         </div>
       </section>
 
+      <!-- SERVIÇOS -->
       <section id="servicos" class="section">
         <div class="card">
-          <h2>Serviços</h2>
-          <p>Em desenvolvimento...</p>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h2>Serviços</h2>
+            <button class="btn btn-primary">+ Novo Serviço</button>
+          </div>
+          <p>Agenda de serviços em desenvolvimento...</p>
         </div>
       </section>
 
+      <!-- CONFIGURAÇÕES -->
       <section id="config" class="section">
         <div class="card">
           <h2>Configurações</h2>
-          <p>Em desenvolvimento...</p>
+          <div class="form-group">
+            <label>Nome da Empresa</label>
+            <input type="text" value="Thiago Pires - Eletricista">
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" value="contato@thiagopires.com">
+          </div>
+          <button class="btn btn-primary full">Salvar Configurações</button>
         </div>
       </section>
     </main>
   </div>
 
   <script>
-    // Navegação entre seções
-    document.querySelectorAll('.nav-item').forEach(item => {
-      item.addEventListener('click', function() {
-        const section = this.dataset.section;
-        
-        // Remove active de todos
-        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-        document.querySelectorAll('.section').forEach(sec => sec.classList.remove('visible'));
-        
-        // Adiciona active no clicado
-        this.classList.add('active');
-        document.getElementById(section).classList.add('visible');
-      });
-    });
-
-    // Logout
-    function logout() {
-      if(confirm('Deseja realmente sair?')) {
+    // ✅ SCRIPT CORRIGIDO - TODOS OS MENUS FUNCIONAM
+    document.addEventListener('DOMContentLoaded', function() {
+      // Verifica login
+      if (!localStorage.getItem('adminLoggedIn')) {
         window.location.href = 'index.html';
+        return;
       }
-    }
 
-    // Verifica se está logado
-    if(!localStorage.getItem('adminLoggedIn')) {
-      window.location.href = 'index.html';
-    }
+      // Navegação entre seções
+      document.querySelectorAll('.nav-item[data-section]').forEach(item => {
+        item.addEventListener('click', function() {
+          const sectionId = this.dataset.section;
+          
+          // Remove active de todos os nav-items
+          document.querySelectorAll('.nav-item').forEach(nav => {
+            nav.classList.remove('active');
+          });
+          
+          // Remove visible de todas as seções
+          document.querySelectorAll('.section').forEach(section => {
+            section.classList.remove('visible');
+          });
+          
+          // Adiciona active no item clicado
+          this.classList.add('active');
+          
+          // Mostra seção clicada
+          const targetSection = document.getElementById(sectionId);
+          if (targetSection) {
+            targetSection.classList.add('visible');
+          }
+          
+          // Atualiza título da página
+          const titles = {
+            'dashboard': 'Dashboard',
+            'clientes': 'Clientes',
+            'orcamentos': 'Orçamentos',
+            'servicos': 'Serviços',
+            'config': 'Configurações'
+          };
+          document.getElementById('pageTitle').textContent = titles[sectionId] || 'Painel Administrativo';
+        });
+      });
+
+      // Logout
+      window.logout = function() {
+        if (confirm('Deseja realmente sair do painel?')) {
+          localStorage.removeItem('adminLoggedIn');
+          window.location.href = 'index.html';
+        }
+      };
+    });
   </script>
 </body>
 </html>
