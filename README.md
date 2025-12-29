@@ -234,27 +234,17 @@ graph TD
 
 🔗 LINKS ÚTEIS
 
-Ação               Comando
+Ação                      Comando
 
-Deploy Vercel
+Deploy Vercel             vercel --prod
 
-vercel --prod
+Deploy Netlify            Drag & Drop pasta
 
-Deploy Netlify
+Editar CSS                assets/css/style.css
 
-Drag & Drop pasta
+Teste Mobile              Chrome DevTools
 
-Editar CSS
-
-assets/css/style.css
-
-Teste Mobile
-
-Chrome DevTools
-
-Limpar Login
-
-localStorage.clear()
+Limpar Login              localStorage.clear()
 
 
 📞 CONTATO SUPORTE
