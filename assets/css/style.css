@@ -1,4 +1,4 @@
-/* Thiago Pires - Eletricista | CSS COMPLETO (Original + Neon Minimalist) */
+/* Thiago Pires - Eletricista | CSS COMPLETO (Fundo corrigido - SEM BRANCO) */
 :root {
   --bg-main: #050816;
   --bg-card: #111827;
@@ -29,8 +29,20 @@ html, body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
   color: var(--text-primary);
   line-height: 1.5;
+  background: none; /* Remove qualquer fundo branco */
 }
 
+/* FUNDO GRADIENTE ESCURO UNIFICADO - MESMO DO CADASTRO */
+body {
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%),
+    linear-gradient(135deg, #0f172a 0%, #020617 70%, #000 100%);
+  min-height: 100vh;
+}
+
+/* Remove bg-gradient da classe antiga */
 body.bg-gradient {
   background: 
     radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
@@ -456,7 +468,7 @@ input:focus, textarea:focus {
   accent-color: var(--accent-blue);
 }
 
-/* DIVIDER */
+/* DIVIDER ORIGINAL */
 .divider {
   display: flex;
   align-items: center;
@@ -514,6 +526,10 @@ input:focus, textarea:focus {
   z-index: 10;
   margin: 0 auto;
   padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .login-card {
@@ -752,13 +768,13 @@ input:focus, textarea:focus {
   opacity: 1;
 }
 
-.divider {
+.divider.neon-divider {
   text-align: center;
   margin: 32px 0 24px;
   position: relative;
 }
 
-.divider::before {
+.divider.neon-divider::before {
   content: '';
   position: absolute;
   top: 50%;
@@ -769,7 +785,7 @@ input:focus, textarea:focus {
   transform: translateY(-50%);
 }
 
-.divider span {
+.divider.neon-divider span {
   background: #151520;
   color: #a0a0b0;
   padding: 0 24px;
@@ -923,4 +939,4 @@ input:focus, textarea:focus {
   .input-wrapper input { padding: 16px; }
   .password-wrapper input { padding-right: 45px; }
   .glow-orb { opacity: 0.5; }
-  }
+}
