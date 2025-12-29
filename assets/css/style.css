@@ -32,6 +32,7 @@ html, body {
   background: none;
 }
 
+/* FUNDO GRADIENTE ESCURO UNIFICADO */
 body {
   background: 
     radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
@@ -66,11 +67,6 @@ body {
   background-clip: text;
 }
 
-.subcode {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-
 .center-wrapper {
   flex: 1;
   display: flex;
@@ -91,45 +87,6 @@ body {
   max-width: 420px;
   position: relative;
   overflow: hidden;
-}
-
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
-}
-
-.card.inner {
-  max-width: 100%;
-  margin-bottom: 1rem;
-}
-
-.card-header {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
-.icon-bolt {
-  width: 50px;
-  height: 50px;
-  margin: 0 auto 1rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
-  box-shadow: var(--shadow-glow);
-  font-size: 1.5rem;
-  animation: boltPulse 2s infinite;
-}
-
-@keyframes boltPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
 }
 
 /* CADASTRO - HEADER CENTRALIZADO */
@@ -159,6 +116,11 @@ body {
   box-shadow: 0 0 40px rgba(0, 255, 136, 0.4);
   font-size: 2rem;
   animation: boltPulse 2s infinite;
+}
+
+@keyframes boltPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 .titulo-cadastro {
@@ -260,40 +222,9 @@ input:focus, textarea:focus {
   box-shadow: 0 12px 35px rgba(34, 197, 94, 0.6);
 }
 
-/* LAYOUT PAINEL */
-.layout {
-  display: flex;
-  min-height: 100vh;
-  gap: 0;
-}
-
-.sidebar {
-  width: 260px;
-  background: rgba(17, 24, 39, 0.95);
-  backdrop-filter: blur(20px);
-  border-right: 1px solid var(--border-subtle);
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow-y: auto;
-}
-
-.main {
-  flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
-}
-
-.grid-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-}
-
-/* NEON MINIMALIST - INDEX.HTML */
+/* ========================================
+   NEON MINIMALIST - LOGIN (INDEX.HTML)
+   ======================================== */
 .login-container {
   width: 100%;
   max-width: 400px;
@@ -318,6 +249,30 @@ input:focus, textarea:focus {
   position: relative;
   backdrop-filter: blur(20px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #00ff88, transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.login-card:hover::before { opacity: 1; }
+
+.login-card:hover {
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(0, 255, 136, 0.1),
+    0 0 40px rgba(0, 255, 136, 0.1);
+  transform: translateY(-2px);
 }
 
 .login-header {
@@ -341,6 +296,13 @@ input:focus, textarea:focus {
   font-size: 2rem;
   font-weight: 600;
   margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+.login-header p {
+  color: #a0a0b0;
+  font-size: 16px;
+  font-weight: 400;
 }
 
 .input-wrapper {
@@ -353,15 +315,73 @@ input:focus, textarea:focus {
   background: #1a1a25;
   border: 1px solid #2a2a35;
   border-radius: 6px;
-  padding: 24px 16px;
+  padding: 24px 16px 24px 16px;
   color: #ffffff;
   font-size: 16px;
+  font-weight: 400;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
 }
 
 .input-wrapper input:focus {
   border-color: #00ff88;
-  box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.1);
+  background: rgba(26, 26, 37, 0.8);
+  box-shadow: 
+    0 0 0 3px rgba(0, 255, 136, 0.1),
+    0 4px 20px rgba(0, 255, 136, 0.1);
+}
+
+.input-wrapper label {
+  position: absolute;
+  left: 16px;
+  top: 24px;
+  color: #a0a0b0;
+  font-size: 16px;
+  font-weight: 400;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  transform-origin: left top;
+}
+
+.input-wrapper input:focus + label,
+.input-wrapper input:valid + label {
+  transform: translateY(-32px) translateX(4px) scale(0.85);
+  color: #00ff88;
+  font-weight: 500;
+}
+
+/* ÍCONE OLHO - VISUALIZAR SENHA */
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  padding-right: 50px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  color: #a0a0b0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 6px;
+  z-index: 2;
+}
+
+.password-toggle:hover {
+  color: #00ff88;
+  background: rgba(0, 255, 136, 0.1);
+}
+
+.toggle-icon {
+  font-size: 18px;
+  display: block;
 }
 
 .login-btn {
@@ -375,7 +395,143 @@ input:focus, textarea:focus {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 24px;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.login-btn .btn-glow {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.login-btn:hover .btn-glow {
+  left: 100%;
+}
+
+.login-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 10px 30px rgba(0, 255, 136, 0.3),
+    0 0 40px rgba(0, 255, 136, 0.2);
+}
+
+/* DIVIDER SEM "OU" - MANTEVE ESPAÇO */
+.divider.neon-divider {
+  text-align: center;
+  margin: 32px 0 24px;
+  position: relative;
+}
+
+.divider.neon-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #2a2a35, transparent);
+  transform: translateY(-50%);
+}
+
+.divider.neon-divider span {
+  background: #151520;
+  color: transparent;
+  padding: 0 24px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  position: relative;
+  z-index: 1;
+  visibility: hidden;
+  width: 40px; /* Mantém espaço exato */
+  height: 20px;
+  display: inline-block;
+}
+
+.signup-link {
+  text-align: center;
+}
+
+.signup-link p {
+  color: #a0a0b0;
+  font-size: 14px;
+}
+
+.signup-link a {
+  color: #00ff88;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.signup-link a:hover {
+  color: #0099ff;
+  text-shadow: 0 0 10px rgba(0, 153, 255, 0.5);
+}
+
+/* EFEITOS DE FUNDO */
+.background-effects {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 255, 136, 0.1), transparent 70%);
+  animation: float 6s ease-in-out infinite;
+}
+
+.glow-orb-1 {
+  width: 300px;
+  height: 300px;
+  top: 10%;
+  left: -10%;
+  background: radial-gradient(circle, rgba(0, 255, 136, 0.08), transparent 70%);
+  animation-delay: 0s;
+}
+
+.glow-orb-2 {
+  width: 200px;
+  height: 200px;
+  top: 60%;
+  right: -5%;
+  background: radial-gradient(circle, rgba(0, 153, 255, 0.06), transparent 70%);
+  animation-delay: -2s;
+}
+
+.glow-orb-3 {
+  width: 150px;
+  height: 150px;
+  bottom: 20%;
+  left: 10%;
+  background: radial-gradient(circle, rgba(255, 0, 128, 0.04), transparent 70%);
+  animation-delay: -4s;
+}
+
+/* ANIMAÇÕES */
+@keyframes pulse {
+  from { filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.3)); }
+  to { filter: drop-shadow(0 0 30px rgba(0, 255, 136, 0.6)); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  33% { transform: translateY(-20px) translateX(10px); }
+  66% { transform: translateY(10px) translateX(-10px); }
 }
 
 /* RESPONSIVO */
@@ -383,15 +539,12 @@ input:focus, textarea:focus {
   .cadastro-header { padding: 1.5rem 1rem; }
   .titulo-cadastro { font-size: 1.8rem; }
   .icon-bolt-large { width: 60px; height: 60px; font-size: 1.5rem; }
+  .login-container { padding: 10px; }
+  .login-card { padding: 24px; margin: 10px; }
 }
 
 @media (max-width: 480px) {
   .header-content { padding: 0 1rem; }
   .titulo-cadastro { font-size: 1.6rem; }
-}
-
-/* ANIMAÇÕES */
-@keyframes pulse {
-  from { filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.3)); }
-  to { filter: drop-shadow(0 0 30px rgba(0, 255, 136, 0.6)); }
+  .glow-orb { opacity: 0.5; }
 }
