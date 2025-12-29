@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Novo Cliente - Thiago Pires</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <div class="center-wrapper">
+      <div class="card cadastro-card">
+        <div class="cadastro-header">
+          <div class="header-content">
+            <div class="icon-bolt-large">👥</div>
+            <h1 class="titulo-cadastro">Novo Cliente</h1>
+            <a href="painel.html#clientes" class="btn-voltar-home">← Voltar</a>
+          </div>
+        </div>
+
+        <form id="clienteForm" class="form-container">
+          <div class="form-group">
+            <label>Nome Completo *</label>
+            <input type="text" name="nome" required>
+          </div>
+
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" name="email" required>
+          </div>
+
+          <div class="form-group">
+            <label>Telefone *</label>
+            <input type="tel" name="telefone" required>
+          </div>
+
+          <div class="form-group">
+            <label>Endereço</label>
+            <textarea name="endereco" rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Observações</label>
+            <textarea name="observacoes" rows="3"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary full">Salvar Cliente</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    if(!localStorage.getItem('adminLoggedIn')) {
+      window.location.href = 'index.html';
+    }
+
+    document.getElementById('clienteForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('✅ Cliente salvo com sucesso!');
+      window.location.href = 'painel.html#clientes';
+    });
+  </script>
+</body>
+</html>
