@@ -1,46 +1,144 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cadastro - Thiago Pires</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
   <div class="app-container">
-    <!-- HEADER CENTRALIZADO - TÍTULO + BOTÃO VOLTAR -->
-    <header class="cadastro-header">
-      <div class="header-content">
-        <div class="icon-bolt-large">⚡</div>
-        <h1 class="titulo-cadastro">Cadastro de Cliente</h1>
-        <a href="index.html" class="btn-voltar-home">← Voltar ao Home</a>
-      </div>
-    </header>
+    <div class="center-wrapper">
+      <div class="card cadastro-card">
+        <div class="cadastro-header">
+          <div class="icon-bolt-large">⚡</div>
+          <h1 class="titulo-cadastro">Cadastro Cliente</h1>
+          <a href="index.html" class="btn-voltar-home">← Voltar</a>
+        </div>
 
-    <main class="center-wrapper">
-      <section class="card cadastro-card">
-        <form id="cadastroForm" class="card-body">
-          <div class="form-group"><label>Nome completo</label><input id="nome" required></div>
-          <div class="form-group"><label>CPF</label><input id="cpf" required maxlength="14"></div>
-          <div class="form-group"><label>Telefone</label><input id="telefone" required maxlength="15"></div>
-          <div class="form-group"><label>Email</label><input id="email" type="email" required></div>
-          <div class="form-group"><label>CEP</label><input id="cep" required maxlength="9"></div>
-          <div class="form-group"><label>Endereço</label><input id="endereco" readonly></div>
-          <div class="form-group"><label>Número</label><input id="numero" required></div>
-          <div class="form-group"><label>Complemento</label><input id="complemento"></div>
-          <div class="form-group"><label>Bairro</label><input id="bairro"></div>
-          <div class="form-group"><label>Observação</label><textarea id="observacao"></textarea></div>
-          <div class="form-group"><label>Senha</label><input id="senha" type="password" required minlength="6"></div>
-          <div class="form-group"><label>Confirme</label><input id="senha2" type="password" required></div>
-          <button type="submit" class="btn btn-primary full">CADASTRAR</button>
+        <form id="cadastroForm">
+          <!-- DADOS PESSOAIS -->
+          <div class="form-group">
+            <label>Nome Completo *</label>
+            <input type="text" name="nome" required>
+          </div>
+
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" name="email" required>
+          </div>
+
+          <div class="form-group">
+            <label>Telefone/WhatsApp *</label>
+            <input type="tel" name="telefone" required>
+          </div>
+
+          <!-- ENDEREÇO -->
+          <div class="form-group">
+            <label>CEP *</label>
+            <input type="text" id="cep" name="cep" placeholder="00000-000" maxlength="9" required>
+          </div>
+
+          <div class="form-group">
+            <label>Nº Imóvel *</label>
+            <input type="text" id="numero" name="numero" placeholder="123" required>
+          </div>
+
+          <div class="form-group">
+            <label>Endereço Completo</label>
+            <input type="text" id="endereco" name="endereco" placeholder="Rua, número, bairro - cidade/UF" readonly>
+          </div>
+
+          <div class="form-group">
+            <label>Serviço Desejado *</label>
+            <select name="servico" required>
+              <option value="">Selecione o serviço</option>
+              <option value="instalacao">Instalação Elétrica Completa</option>
+              <option value="manutencao">Manutenção Predial</option>
+              <option value="reparo">Reparos Elétricos</option>
+              <option value="quadro">Quadro de Distribuição</option>
+              <option value="iluminacao">Iluminação LED</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary full">Cadastrar e Agendar</button>
         </form>
-      </section>
-    </main>
+      </div>
+    </div>
   </div>
 
-  <script src="assets/js/utils.js"></script>
-  <script src="assets/js/api.js"></script>
-  <script src="assets/js/auth.js"></script>
+  <script>
+    // ✅ VIA CEP API AUTOMÁTICA
+    document.getElementById('cep').addEventListener('blur', function() {
+      const cep = this.value.replace(/D/g, '');
+      
+      if (cep.length === 8) {
+        // Formatar CEP visualmente
+        this.value = cep.replace(/(d{5})(d{3})/, '$1-$2');
+        
+        // Buscar endereço
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+          .then(response => response.json())
+          .then(data => {
+            if (!data.erro) {
+              // Preencher endereço AUTOMATICAMENTE
+              document.getElementById('endereco').value = `${data.logradouro}, ${data.bairro} - ${data.localidade}/${data.uf}`;
+              
+              // PULAR para número
+              document.getElementById('numero').focus();
+              
+              // Campo readonly fica "escuro" (visual de preenchido)
+              document.getElementById('endereco').style.background = 'rgba(34, 197, 94, 0.1)';
+              document.getElementById('endereco').style.borderColor = 'rgba(34, 197, 94, 0.5)';
+            } else {
+              alert('CEP não encontrado! Verifique o número.');
+              document.getElementById('endereco').value = '';
+            }
+          })
+          .catch(() => {
+            alert('Erro ao buscar CEP. Verifique sua conexão.');
+            document.getElementById('endereco').value = '';
+          });
+      }
+    });
+
+    // Máscara CEP (99999-999)
+    document.getElementById('cep').addEventListener('input', function(e) {
+      let value = e.target.value.replace(/D/g, '');
+      value = value.replace(/(d{5})(d{3})/, '$1-$2');
+      e.target.value = value;
+    });
+
+    // Submit formulário
+    document.getElementById('cadastroForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const dados = Object.fromEntries(formData);
+      
+      if (!dados.endereco) {
+        alert('Preencha o CEP primeiro!');
+        return;
+      }
+      
+      // Simular salvamento
+      alert('✅ Cadastro realizado!
+
+' + 
+            '📱 Thiago entrará em contato via WhatsApp
+' +
+            '📅 Para confirmar o agendamento
+
+' +
+            `👤 ${dados.nome}
+` +
+            `📍 ${dados.endereco}, ${dados.numero}
+` +
+            `💡 ${dados.servico}`);
+      
+      // Redirecionar para sucesso ou home
+      window.location.href = 'index.html';
+    });
+  </script>
 </body>
 </html>
