@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -98,9 +97,11 @@
       <!-- CLIENTES -->
       <section id="clientes" class="section">
         <div class="card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
             <h2>Lista de Clientes</h2>
-            <button class="btn btn-primary">+ Novo Cliente</button>
+            <button class="btn btn-primary" onclick="window.location.href='novo-cliente.html'">
+              + Novo Cliente
+            </button>
           </div>
           <div class="table-responsive">
             <table class="table">
@@ -122,8 +123,8 @@
                   <td>15/12/2025</td>
                   <td><span class="badge badge-success">Ativo</span></td>
                   <td>
-                    <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Editar</button>
-                    <button class="btn" style="background: var(--danger); color: white; padding: 0.25rem 0.5rem; font-size: 0.75rem; margin-left: 0.5rem;">Excluir</button>
+                    <button class="btn" style="background: var(--accent-blue); color: white; padding: 0.4rem 0.8rem; font-size: 0.8rem; margin-right: 0.5rem;">Editar</button>
+                    <button class="btn" style="background: var(--danger); color: white; padding: 0.4rem 0.8rem; font-size: 0.8rem;">Excluir</button>
                   </td>
                 </tr>
                 <tr>
@@ -133,8 +134,8 @@
                   <td>20/12/2025</td>
                   <td><span class="badge badge-success">Ativo</span></td>
                   <td>
-                    <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Editar</button>
-                    <button class="btn" style="background: var(--danger); color: white; padding: 0.25rem 0.5rem; font-size: 0.75rem; margin-left: 0.5rem;">Excluir</button>
+                    <button class="btn" style="background: var(--accent-blue); color: white; padding: 0.4rem 0.8rem; font-size: 0.8rem; margin-right: 0.5rem;">Editar</button>
+                    <button class="btn" style="background: var(--danger); color: white; padding: 0.4rem 0.8rem; font-size: 0.8rem;">Excluir</button>
                   </td>
                 </tr>
               </tbody>
@@ -146,22 +147,72 @@
       <!-- ORÇAMENTOS -->
       <section id="orcamentos" class="section">
         <div class="card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
             <h2>Orçamentos</h2>
-            <button class="btn btn-primary">+ Novo Orçamento</button>
+            <button class="btn btn-primary" onclick="window.location.href='novo-orcamento.html'">
+              + Novo Orçamento
+            </button>
           </div>
-          <p>Lista de orçamentos em desenvolvimento...</p>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Serviço</th>
+                  <th>Valor</th>
+                  <th>Status</th>
+                  <th>Data</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>João Silva</td>
+                  <td>Instalação elétrica</td>
+                  <td>R$ 2.500</td>
+                  <td><span class="badge badge-success">Aprovado</span></td>
+                  <td>15/12/2025</td>
+                  <td>
+                    <button class="btn" style="background: var(--accent-blue); color: white; padding: 0.4rem 0.8rem; font-size: 0.8rem;">Ver</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
       <!-- SERVIÇOS -->
       <section id="servicos" class="section">
         <div class="card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <h2>Serviços</h2>
-            <button class="btn btn-primary">+ Novo Serviço</button>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2>Serviços Agendados</h2>
+            <button class="btn btn-primary" onclick="window.location.href='novo-servico.html'">
+              + Novo Serviço
+            </button>
           </div>
-          <p>Agenda de serviços em desenvolvimento...</p>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Serviço</th>
+                  <th>Data/Horário</th>
+                  <th>Valor</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Maria Santos</td>
+                  <td>Manutenção elétrica</td>
+                  <td>30/12/2025 14:00</td>
+                  <td>R$ 450</td>
+                  <td><span class="badge badge-muted">Agendado</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -174,8 +225,12 @@
             <input type="text" value="Thiago Pires - Eletricista">
           </div>
           <div class="form-group">
-            <label>Email</label>
+            <label>Email Principal</label>
             <input type="email" value="contato@thiagopires.com">
+          </div>
+          <div class="form-group">
+            <label>Telefone</label>
+            <input type="tel" value="(11) 99999-9999">
           </div>
           <button class="btn btn-primary full">Salvar Configurações</button>
         </div>
@@ -184,7 +239,7 @@
   </div>
 
   <script>
-    // ✅ SCRIPT CORRIGIDO - TODOS OS MENUS FUNCIONAM
+    // ✅ SCRIPT PERFEITO - TODOS OS MENUS FUNCIONAM
     document.addEventListener('DOMContentLoaded', function() {
       // Verifica login
       if (!localStorage.getItem('adminLoggedIn')) {
@@ -197,26 +252,15 @@
         item.addEventListener('click', function() {
           const sectionId = this.dataset.section;
           
-          // Remove active de todos os nav-items
-          document.querySelectorAll('.nav-item').forEach(nav => {
-            nav.classList.remove('active');
-          });
+          // Remove active de todos
+          document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+          document.querySelectorAll('.section').forEach(section => section.classList.remove('visible'));
           
-          // Remove visible de todas as seções
-          document.querySelectorAll('.section').forEach(section => {
-            section.classList.remove('visible');
-          });
-          
-          // Adiciona active no item clicado
+          // Ativa item e seção clicados
           this.classList.add('active');
+          document.getElementById(sectionId).classList.add('visible');
           
-          // Mostra seção clicada
-          const targetSection = document.getElementById(sectionId);
-          if (targetSection) {
-            targetSection.classList.add('visible');
-          }
-          
-          // Atualiza título da página
+          // Atualiza título
           const titles = {
             'dashboard': 'Dashboard',
             'clientes': 'Clientes',
