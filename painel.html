@@ -61,7 +61,6 @@
               <p class="text-muted">+12 este mês</p>
             </div>
           </div>
-          
           <div class="card">
             <div class="card-list-item">
               <div class="card-list-item-header">
@@ -71,7 +70,6 @@
               <p class="text-muted">R$ 45.230 faturados</p>
             </div>
           </div>
-          
           <div class="card">
             <div class="card-list-item">
               <div class="card-list-item-header">
@@ -81,7 +79,6 @@
               <p class="text-muted">Próximos 7 dias</p>
             </div>
           </div>
-          
           <div class="card">
             <div class="card-list-item">
               <div class="card-list-item-header">
@@ -94,65 +91,131 @@
         </div>
       </section>
 
-      <!-- CLIENTES -->
+      <!-- CLIENTES - TABELA MELHORADA MOBILE -->
       <section id="clientes" class="section">
         <div class="card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <div class="section-header">
             <h2>Lista de Clientes</h2>
-            <button class="btn btn-primary" onclick="openModal('clienteModal')">
-              + Novo Cliente
-            </button>
+            <button class="btn btn-primary" onclick="openModal('clienteModal')">+ Novo Cliente</button>
           </div>
-          <!-- TABELA CLIENTES AQUI (mesma de antes) -->
           <div class="table-responsive">
-            <table class="table">
-              <thead><tr><th>Nome</th><th>Email</th><th>Telefone</th><th>Último Serviço</th><th>Status</th><th>Ações</th></tr></thead>
+            <table class="table table-mobile">
+              <thead>
+                <tr>
+                  <th><span>Nome</span></th>
+                  <th><span>Email</span></th>
+                  <th><span>Telefone</span></th>
+                  <th><span>Último Serviço</span></th>
+                  <th><span>Status</span></th>
+                  <th><span>Ações</span></th>
+                </tr>
+              </thead>
               <tbody>
-                <tr><td>João Silva</td><td>joao@email.com</td><td>(11) 99999-9999</td><td>15/12/2025</td><td><span class="badge badge-success">Ativo</span></td><td><button class="btn" style="background: var(--accent-blue); color: white; padding: 0.4rem 0.8rem; font-size: 0.8rem;">Editar</button><button class="btn" style="background: var(--danger); color: white; padding: 0.4rem 0.8rem; font-size: 0.8rem;">Excluir</button></td></tr>
-                <tr><td>Maria Santos</td><td>maria@email.com</td><td>(11) 88888-8888</td><td>20/12/2025</td><td><span class="badge badge-success">Ativo</span></td><td><button class="btn" style="background: var(--accent-blue); color: white; padding: 0.4rem 0.8rem; font-size: 0.8rem;">Editar</button><button class="btn" style="background: var(--danger); color: white; padding: 0.4rem 0.8rem; font-size: 0.8rem;">Excluir</button></td></tr>
+                <tr>
+                  <td data-label="Nome">João Silva</td>
+                  <td data-label="Email">joao@email.com</td>
+                  <td data-label="Telefone">(11) 99999-9999</td>
+                  <td data-label="Último Serviço">15/12/2025</td>
+                  <td data-label="Status"><span class="badge badge-success">Ativo</span></td>
+                  <td data-label="Ações">
+                    <button class="btn-small btn-blue">Editar</button>
+                    <button class="btn-small btn-danger">Excluir</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td data-label="Nome">Maria Santos</td>
+                  <td data-label="Email">maria@email.com</td>
+                  <td data-label="Telefone">(11) 88888-8888</td>
+                  <td data-label="Último Serviço">20/12/2025</td>
+                  <td data-label="Status"><span class="badge badge-success">Ativo</span></td>
+                  <td data-label="Ações">
+                    <button class="btn-small btn-blue">Editar</button>
+                    <button class="btn-small btn-danger">Excluir</button>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
         </div>
       </section>
 
-      <!-- ORÇAMENTOS -->
-      <section id="orcamentos" class="section">
-        <div class="card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <h2>Orçamentos</h2>
-            <button class="btn btn-primary" onclick="openModal('orcamentoModal')">
-              + Novo Orçamento
-            </button>
-          </div>
-          <!-- TABELA ORÇAMENTOS AQUI -->
-        </div>
-      </section>
-
-      <!-- SERVIÇOS -->
-      <section id="servicos" class="section">
-        <div class="card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <h2>Serviços Agendados</h2>
-            <button class="btn btn-primary" onclick="openModal('servicoModal')">
-              + Novo Serviço
-            </button>
-          </div>
-          <!-- TABELA SERVIÇOS AQUI -->
-        </div>
-      </section>
-
-      <!-- CONFIGURAÇÕES -->
+      <!-- CONFIGURAÇÕES - COMPLETA -->
       <section id="config" class="section">
         <div class="card">
-          <h2>Configurações</h2>
-          <!-- FORM CONFIG AQUI -->
+          <div class="section-header">
+            <h2>Configurações</h2>
+          </div>
+          
+          <!-- ADMIN LOGIN -->
+          <div class="config-section">
+            <h3>🔐 Credenciais Admin</h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Email Admin</label>
+                <input type="email" value="admin@thiagopires.com">
+              </div>
+              <div class="form-group">
+                <label>Senha Admin</label>
+                <input type="password" value="••••••••">
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="updateAdmin()">Atualizar Credenciais</button>
+          </div>
+
+          <!-- EMPRESA -->
+          <div class="config-section">
+            <h3>🏢 Dados da Empresa</h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Nome</label>
+                <input type="text" value="Thiago Pires - Eletricista">
+              </div>
+              <div class="form-group">
+                <label>Telefone</label>
+                <input type="tel" value="(11) 99999-9999">
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" value="contato@thiagopires.com">
+              </div>
+            </div>
+            <button class="btn btn-primary">Salvar Empresa</button>
+          </div>
+
+          <!-- RELATÓRIOS -->
+          <div class="config-section">
+            <h3>📊 Relatórios</h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <button class="btn btn-primary full" onclick="generateReport('semanal')">Relatório Semanal</button>
+              </div>
+              <div class="form-group">
+                <button class="btn btn-primary full" onclick="generateReport('mensal')">Relatório Mensal</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- DASHBOARD -->
+          <div class="config-section">
+            <h3>📈 Configurar Dashboard</h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Meta Mensal (R$)</label>
+                <input type="number" value="50000">
+              </div>
+              <div class="form-group">
+                <label>Meta Clientes</label>
+                <input type="number" value="300">
+              </div>
+            </div>
+            <button class="btn btn-primary">Atualizar Dashboard</button>
+          </div>
         </div>
       </section>
     </main>
   </div>
 
-  <!-- MODAL NOVO CLIENTE -->
+  <!-- MODALS MOBILE OTIMIZADOS -->
   <div id="clienteModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -172,10 +235,6 @@
           <label>Telefone *</label>
           <input type="tel" name="telefone" required>
         </div>
-        <div class="form-group">
-          <label>Endereço</label>
-          <textarea name="endereco" rows="2"></textarea>
-        </div>
         <div class="form-actions">
           <button type="button" class="btn" onclick="closeModal('clienteModal')">Cancelar</button>
           <button type="submit" class="btn btn-primary">Salvar Cliente</button>
@@ -184,7 +243,7 @@
     </div>
   </div>
 
-  <!-- MODAL NOVO ORÇAMENTO -->
+  <!-- outros modals... -->
   <div id="orcamentoModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -194,55 +253,15 @@
       <form id="orcamentoForm">
         <div class="form-group">
           <label>Cliente *</label>
-          <select name="cliente" required>
-            <option value="">Selecione</option>
-            <option value="joao">João Silva</option>
-            <option value="maria">Maria Santos</option>
-          </select>
+          <select name="cliente" required><option>Selecione</option><option>João Silva</option></select>
         </div>
         <div class="form-group">
-          <label>Valor (R$) *</label>
-          <input type="number" name="valor" step="0.01" required>
-        </div>
-        <div class="form-group">
-          <label>Descrição *</label>
-          <textarea name="descricao" rows="3" required></textarea>
+          <label>Valor *</label>
+          <input type="number" name="valor" required>
         </div>
         <div class="form-actions">
           <button type="button" class="btn" onclick="closeModal('orcamentoModal')">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Gerar Orçamento</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL NOVO SERVIÇO -->
-  <div id="servicoModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>🔧 Novo Serviço</h3>
-        <button class="modal-close" onclick="closeModal('servicoModal')">&times;</button>
-      </div>
-      <form id="servicoForm">
-        <div class="form-group">
-          <label>Cliente *</label>
-          <select name="cliente" required>
-            <option value="">Selecione</option>
-            <option value="joao">João Silva</option>
-            <option value="maria">Maria Santos</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Data *</label>
-          <input type="date" name="data" required>
-        </div>
-        <div class="form-group">
-          <label>Serviço *</label>
-          <input type="text" name="servico" required>
-        </div>
-        <div class="form-actions">
-          <button type="button" class="btn" onclick="closeModal('servicoModal')">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Agendar Serviço</button>
+          <button type="submit" class="btn btn-primary">Gerar</button>
         </div>
       </form>
     </div>
@@ -250,60 +269,41 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      if (!localStorage.getItem('adminLoggedIn')) {
-        window.location.href = 'index.html';
-        return;
-      }
+      if (!localStorage.getItem('adminLoggedIn')) window.location.href = 'index.html';
 
-      // Navegação sidebar (mesmo código de antes)
+      // Navegação
       document.querySelectorAll('.nav-item[data-section]').forEach(item => {
         item.addEventListener('click', function() {
-          const sectionId = this.dataset.section;
           document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
           document.querySelectorAll('.section').forEach(section => section.classList.remove('visible'));
           this.classList.add('active');
-          document.getElementById(sectionId).classList.add('visible');
-          const titles = {'dashboard': 'Dashboard','clientes': 'Clientes','orcamentos': 'Orçamentos','servicos': 'Serviços','config': 'Configurações'};
-          document.getElementById('pageTitle').textContent = titles[sectionId] || 'Painel Administrativo';
+          document.getElementById(this.dataset.section).classList.add('visible');
+          document.getElementById('pageTitle').textContent = {
+            'dashboard': 'Dashboard', 'clientes': 'Clientes', 
+            'orcamentos': 'Orçamentos', 'servicos': 'Serviços', 
+            'config': 'Configurações'
+          }[this.dataset.section] || 'Painel';
         });
       });
 
-      // MODALS
+      // Forms modals
       document.querySelectorAll('form').forEach(form => {
         form.addEventListener('submit', function(e) {
           e.preventDefault();
-          alert('✅ ' + this.id.replace('Form', '') + ' salvo com sucesso!');
+          alert('✅ ' + this.id.replace('Form', '') + ' salvo!');
           closeAllModals();
         });
       });
 
-      window.logout = function() {
-        if (confirm('Deseja realmente sair?')) {
-          localStorage.removeItem('adminLoggedIn');
-          window.location.href = 'index.html';
-        }
-      };
+      window.logout = () => confirm('Sair?') && (localStorage.removeItem('adminLoggedIn'), location.href='index.html');
+      window.updateAdmin = () => alert('✅ Credenciais atualizadas!');
+      window.generateReport = type => alert(`✅ Relatório ${type} gerado!`);
     });
 
-    // FUNÇÕES MODAL
-    function openModal(modalId) {
-      document.getElementById(modalId).classList.add('active');
-    }
-
-    function closeModal(modalId) {
-      document.getElementById(modalId).classList.remove('active');
-    }
-
-    function closeAllModals() {
-      document.querySelectorAll('.modal').forEach(modal => modal.classList.remove('active'));
-    }
-
-    // Fechar modal clicando fora
-    document.addEventListener('click', function(e) {
-      if (e.target.classList.contains('modal')) {
-        closeAllModals();
-      }
-    });
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    function closeAllModals() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); }
+    document.addEventListener('click', e => e.target.classList.contains('modal') && closeAllModals());
   </script>
 </body>
 </html>
