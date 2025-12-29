@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Thiago Pires - Eletricista</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-gradient">
+  <div class="app-container">
+    <header class="top-bar">
+      <span class="brand">⚡ Thiago Pires</span>
+      <span class="subcode">Eletricista Profissional</span>
+    </header>
+
+    <main class="center-wrapper">
+      <section class="card login-card">
+        <div class="card-header">
+          <div class="icon-bolt">⚡</div>
+          <h1>Entrar</h1>
+          <p>Acesse sua conta</p>
+        </div>
+
+        <form id="loginForm" class="card-body">
+          <div class="form-group">
+            <label for="loginEmail">Email</label>
+            <input id="loginEmail" type="email" required placeholder="admin@thiago22">
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Senha</label>
+            <div class="input-with-icon">
+              <input id="loginPassword" type="password" required placeholder="thiago22">
+              <button type="button" class="icon-button" id="togglePassword">👁</button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary full">ENTRAR</button>
+          <div class="divider"><span>ou</span></div>
+          <button type="button" class="btn btn-outline full" onclick="location.href='cadastro.html'">
+            Novo? Cadastre-se
+          </button>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/auth.js"></script>
+</body>
+</html>
