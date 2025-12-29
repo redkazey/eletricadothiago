@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Thiago Pires</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-gradient">
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="brand">⚡ Thiago Pires</span>
+        <small>Administrador</small>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-section="materiais">📦 Materiais</button>
+        <button class="nav-item" data-section="servicos">🔧 Serviços</button>
+        <button class="nav-item" data-section="agenda">📅 Agenda</button>
+        <button class="nav-item" data-section="clientes">👥 Clientes</button>
+        <button class="nav-item" data-section="cupons">🎟️ Cupons</button>
+        <button class="nav-item" data-section="cupons-relatorio">📊 Relatório</button>
+        <button class="nav-item" data-section="seguranca">🔐 Segurança</button>
+      </nav>
+      <button class="btn btn-outline full mt-2" id="logoutAdmin">Sair</button>
+    </aside>
+
+    <main class="main">
+      <header class="main-header">
+        <h1 id="adminTitulo">Gerenciar Materiais</h1>
+      </header>
+
+      <!-- Materiais -->
+      <section id="adm-materiais" class="section visible">
+        <div class="card inner">
+          <h2>Novo Material</h2>
+          <form id="formMaterial">
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="matNome">Nome</label>
+                <input id="matNome" required>
+              </div>
+              <div class="form-group">
+                <label for="matPreco">Preço (R$)</label>
+                <input id="matPreco" type="number" step="0.01" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="matObs">Observações</label>
+              <textarea id="matObs"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Adicionar</button>
+          </form>
+        </div>
+        <div class="card inner mt-2">
+          <h2>Materiais Cadastrados</h2>
+          <div id="tabelaMateriais"></div>
+        </div>
+      </section>
+
+      <!-- Serviços -->
+      <section id="adm-servicos" class="section">
+        <div class="card inner">
+          <h2>Novo Serviço</h2>
+          <form id="formServico">
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="srvNome">Nome</label>
+                <input id="srvNome" required>
+              </div>
+              <div class="form-group">
+                <label for="srvPreco">Preço (R$)</label>
+                <input id="srvPreco" type="number" step="0.01" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="srvTempo">Tempo estimado</label>
+              <input id="srvTempo" placeholder="ex: 2h">
+            </div>
+            <label class="checkbox">
+              <input type="checkbox" id="srvVisivel" checked> Visível para clientes
+            </label>
+            <button type="submit" class="btn btn-primary">Adicionar</button>
+          </form>
+        </div>
+        <div class="card inner mt-2">
+          <h2>Serviços Cadastrados</h2>
+          <div id="tabelaServicos"></div>
+        </div>
+      </section>
+
+      <!-- Agenda -->
+      <section id="adm-agenda" class="section">
+        <div class="card inner">
+          <h2>Controle de Agenda</h2>
+          <div class="form-row">
+            <button class="btn btn-primary" id="modoTrabalho">🟢 Modo Trabalho</button>
+            <button class="btn btn-outline" id="modoFerias">🌴 Modo Férias</button>
+          </div>
+          <div class="mt-2">
+            <h3>Agendamentos</h3>
+            <div id="listaAgendamentos" class="grid-cards"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Clientes -->
+      <section id="adm-clientes" class="section">
+        <div class="card inner">
+          <h2>Clientes Cadastrados</h2>
+          <div id="tabelaClientes"></div>
+        </div>
+      </section>
+
+      <!-- Cupons -->
+      <section id="adm-cupons" class="section">
+        <div class="card inner">
+          <h2>Novo Cupom</h2>
+          <form id="formCupom">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cupCodigo">Código</label>
+                <input id="cupCodigo" required>
+              </div>
+              <div class="form-group">
+                <label for="cupDesconto">Desconto (%)</label>
+                <input id="cupDesconto" type="number" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cupInicio">Válido de</label>
+                <input id="cupInicio" type="datetime-local" required>
+              </div>
+              <div class="form-group">
+                <label for="cupFim">Válido até</label>
+                <input id="cupFim" type="datetime-local" required>
+              </div>
+            </div>
+            <label class="checkbox">
+              <input type="checkbox" id="cupAtivo" checked> Ativo
+            </label>
+            <button type="submit" class="btn btn-primary">Criar Cupom</button>
+          </form>
+        </div>
+        <div class="card inner mt-2">
+          <h2>Cupons Ativos</h2>
+          <div id="tabelaCupons"></div>
+        </div>
+      </section>
+
+      <!-- Relatório Cupons -->
+      <section id="adm-cupons-relatorio" class="section">
+        <div class="card inner">
+          <h2>Cupons Utilizados</h2>
+          <div id="relatorioCupons"></div>
+        </div>
+      </section>
+
+      <!-- Segurança -->
+      <section id="adm-seguranca" class="section">
+        <div class="card inner">
+          <h2>Alterar Credenciais ADM</h2>
+          <form id="formAdminSenha">
+            <div class="form-group">
+              <label for="admEmailAtual">Email atual</label>
+              <input id="admEmailAtual" type="email" required>
+            </div>
+            <div class="form-group">
+              <label for="admSenhaAtual">Senha atual</label>
+              <input id="admSenhaAtual" type="password" required>
+            </div>
+            <div class="form-group">
+              <label for="admNovoEmail">Novo email</label>
+              <input id="admNovoEmail" type="email" required>
+            </div>
+            <div class="form-group">
+              <label for="admNovaSenha">Nova senha</label>
+              <input id="admNovaSenha" type="password" minlength="6" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Atualizar</button>
+          </form>
+        </div>
+        <div class="card inner mt-2">
+          <h2>Exportar Dados</h2>
+          <div class="form-row">
+            <button class="btn btn-outline" id="exportExcel">📊 Excel (CSV)</button>
+            <button class="btn btn-outline" id="exportPdf">📄 PDF</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/admin.js"></script>
+</body>
+</html>
