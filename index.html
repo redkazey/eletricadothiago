@@ -18,129 +18,73 @@
 
         <form id="loginForm">
           <div class="form-group">
-            <label>Email *</label>
-            <input type="email" name="email" placeholder="admin@thiagopires.com ou seu email" required>
+            <label>Email</label>
+            <input type="email" name="email" placeholder="Seu email de cadastro" required>
           </div>
 
           <div class="form-group">
-            <label>Senha *</label>
-            <input type="password" name="senha" placeholder="Digite sua senha" required minlength="6">
+            <label>Senha</label>
+            <div class="password-container">
+              <input type="password" name="senha" id="senhaInput" placeholder="Sua senha" required minlength="6">
+              <button type="button" class="show-password" onclick="togglePassword()">👁</button>
+            </div>
           </div>
 
           <button type="submit" class="btn btn-primary full">ENTRAR</button>
         </form>
 
         <div class="login-footer">
-          <p>👤 <strong>Admin:</strong> admin@thiagopires.com (qualquer senha → Painel Admin)</p>
-          <p>👤 <strong>Cliente:</strong> Use seu email do cadastro → Painel Cliente</p>
-          <p>Não tem cadastro? <a href="cadastro.html">Faça seu cadastro aqui</a></p>
-          <p><small>🔐 Logout automático após 10 min de inatividade</small></p>
+          <p>Não tem cadastro? <a href="cadastro.html">Faça seu cadastro</a></p>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // 🔥 LOGOUT AUTOMÁTICO 10 MINUTOS - COMPLETO
-    let inactivityTimer;
-    function resetTimer() {
-      clearTimeout(inactivityTimer);
-      inactivityTimer = setTimeout(() => {
-        localStorage.clear();
-        alert('🔐 Sessão expirada por inatividade (10 minutos)');
-        window.location.href = 'index.html';
-      }, 10 * 60 * 1000); // 10 minutos = 600.000 ms
+    // 👁 MOSTRAR SENHA
+    function togglePassword() {
+      const senhaInput = document.getElementById('senhaInput');
+      const btn = event.target;
+      senhaInput.type = senhaInput.type === 'password' ? 'text' : 'password';
+      btn.textContent = senhaInput.type === 'password' ? '👁' : '🙈';
     }
 
-    // Detecta TODAS atividades do usuário
-    ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'touchmove', 'click'].forEach(event => {
-      document.addEventListener(event, resetTimer, true);
-    });
-
-    // Inicia timer imediatamente
-    resetTimer();
-
-    // 🔒 LOGIN INTELIGENTE ADMIN vs CLIENTE - COMPLETO
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
+    // 🔐 LOGIN REAL - ADMIN OU CLIENTE
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-      
       const email = document.querySelector('input[name="email"]').value.trim().toLowerCase();
       const senha = document.querySelector('input[name="senha"]').value;
       
-      // Validação básica
-      if (!email || !senha) {
-        alert('❌ Preencha email e senha!');
-        return;
-      }
-
-      if (senha.length < 6 && email !== 'admin@thiagopires.com') {
-        alert('❌ Senha deve ter 6+ caracteres (exceto admin)');
-        return;
-      }
-
-      // ✅ ADMIN - Painel completo
-      if (email === 'admin@thiagopires.com') {
+      // ADMIN SECRETO
+      if (email === 'admin@thiago22' && senha === 'thiago22') {
         localStorage.setItem('adminLoggedIn', 'true');
         localStorage.setItem('userType', 'admin');
-        localStorage.setItem('adminEmail', email);
-        localStorage.setItem('loginTime', Date.now());
-        alert('✅ Bem-vindo ao Painel Admin!');
         window.location.href = 'painel.html';
-      } 
-      // ✅ CLIENTE - Painel cliente
-      else {
-        // Verifica se existe cadastro (simula banco)
-        const clienteData = JSON.parse(localStorage.getItem('clientData'));
-        if (clienteData && clienteData.email === email) {
+        return;
+      }
+      
+      // CLIENTE - VERIFICA BANCO D1
+      try {
+        const response = await fetch('https://api-thiago-pires.YOUR_WORKER.workers.dev/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, senha: btoa(senha) })
+        });
+        const result = await response.json();
+        
+        if (result.success) {
           localStorage.setItem('clientLoggedIn', 'true');
-          localStorage.setItem('clientEmail', email);
+          localStorage.setItem('clientId', result.cliente.id);
+          localStorage.setItem('clientEmail', result.cliente.email);
           localStorage.setItem('userType', 'client');
-          localStorage.setItem('clientSenha', btoa(senha));
-          localStorage.setItem('loginTime', Date.now());
-          alert('✅ Bem-vindo ao seu Painel Cliente!');
           window.location.href = 'cliente.html';
         } else {
-          // Cliente sem cadastro ainda
-          localStorage.setItem('clientLoggedIn', 'true');
-          localStorage.setItem('clientEmail', email);
-          localStorage.setItem('userType', 'client');
-          localStorage.setItem('clientSenha', btoa(senha));
-          localStorage.setItem('loginTime', Date.now());
-          alert('✅ Login realizado! Faça seu cadastro para acessar serviços.');
-          window.location.href = 'cliente.html';
+          alert('❌ Email ou senha incorretos!');
         }
+      } catch(e) {
+        alert('❌ Erro de conexão. Tente novamente.');
       }
     });
-
-    // ⌨️ LOGIN RÁPIDO COM ENTER
-    document.addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        document.getElementById('loginForm').dispatchEvent(new Event('submit'));
-      }
-    });
-
-    // 💡 HINTS INTELIGENTES NOS CAMPOS
-    document.querySelector('input[name="email"]').addEventListener('focus', function() {
-      if (!this.value) {
-        this.placeholder = 'admin@thiagopires.com = Painel Admin | seuemail@exemplo.com = Painel Cliente';
-      }
-    });
-
-    document.querySelector('input[name="senha"]').addEventListener('focus', function() {
-      this.placeholder = 'Admin: qualquer senha | Cliente: mínimo 6 caracteres';
-    });
-
-    // 🌐 FUNÇÃO GLOBAL LOGOUT (usada em outras páginas)
-    window.logout = function() {
-      clearTimeout(inactivityTimer);
-      localStorage.clear();
-      window.location.href = 'index.html';
-    };
-
-    // 🔄 LIMPA CACHE ANTIGO (segurança)
-    if (localStorage.getItem('loginTime') && (Date.now() - localStorage.getItem('loginTime')) > 30 * 60 * 1000) {
-      localStorage.clear();
-    }
   </script>
 </body>
 </html>
