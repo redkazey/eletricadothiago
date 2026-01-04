@@ -1,48 +1,58 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meu Painel - Thiago Pires</title>
+  <title>Painel Cliente - Thiago Pires</title>
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
   <div class="app-container">
+    <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <div class="icon-bolt">⚡</div>
         <h2>Thiago Pires</h2>
       </div>
       <nav class="sidebar-nav">
-        <a href="#" class="nav-link active" onclick="showSection('dashboard')"><span>📊</span> Dashboard</a>
-        <a href="#" class="nav-link" onclick="showSection('servicos')"><span>🔧</span> Meus Serviços</a>
-        <a href="#" class="nav-link" onclick="showSection('perfil')"><span>👤</span> Meu Perfil</a>
+        <a href="#" class="nav-link active" data-section="dashboard"><span>📊</span> Dashboard</a>
+        <a href="#" class="nav-link" data-section="servicos"><span>🔧</span> Meus Serviços</a>
+        <a href="#" class="nav-link" data-section="orcamentos"><span>💰</span> Orçamentos</a>
+        <a href="#" class="nav-link" data-section="configuracoes"><span>⚙️</span> Configurações</a>
         <a href="#" class="nav-link" onclick="logout()"><span>🚪</span> Sair</a>
       </nav>
     </aside>
 
     <main class="main-content">
       <header class="main-header">
-        <h1>Meu Painel Cliente</h1>
+        <h1>Painel Cliente</h1>
         <div class="user-info">
           <span id="clientName">Carregando...</span>
+          <button class="btn-logout" onclick="logout()">Sair</button>
         </div>
       </header>
 
-      <!-- DASHBOARD -->
+      <!-- DASHBOARD REAL -->
       <section id="dashboard" class="content-section active">
         <div class="grid-cards">
           <div class="card">
-            <h3>Serviços Ativos</h3>
-            <div class="badge badge-success" id="ativosCount">0</div>
+            <div class="card-list-item">
+              <h3>Serviços Ativos</h3>
+              <div class="badge badge-success" id="ativosCount">0</div>
+            </div>
           </div>
           <div class="card">
-            <h3>Orçamentos</h3>
-            <div class="badge badge-muted" id="orcamentosCount">0</div>
+            <div class="card-list-item">
+              <h3>Orçamentos Pendentes</h3>
+              <div class="badge badge-warning" id="orcamentosCount">0</div>
+            </div>
           </div>
           <div class="card">
-            <h3>Próximos 7 dias</h3>
-            <div class="badge badge-warning" id="proximosCount">0</div>
+            <div class="card-list-item">
+              <h3>Total de Serviços</h3>
+              <div class="badge badge-primary" id="totalServicos">0</div>
+            </div>
           </div>
         </div>
       </section>
@@ -51,7 +61,7 @@
       <section id="servicos" class="content-section">
         <div class="table-header">
           <h2>Meus Serviços</h2>
-          <button class="btn btn-primary" onclick="novoServico()">+ Solicitar Novo</button>
+          <button class="btn btn-primary" onclick="novoServico()">+ Solicitar Serviço</button>
         </div>
         <div class="table-container">
           <table>
@@ -60,205 +70,297 @@
                 <th>Serviço</th>
                 <th>Data</th>
                 <th>Status</th>
+                <th>Valor</th>
                 <th>Ações</th>
               </tr>
             </thead>
-            <tbody id="servicosTable"></tbody>
+            <tbody id="servicosTable">
+              <tr>
+                <td colspan="5" style="text-align:center;padding:20px;">Carregando serviços...</td>
+              </tr>
+            </tbody>
           </table>
         </div>
       </section>
 
-      <!-- PERFIL -->
-      <section id="perfil" class="content-section">
-        <div class="form-group">
-          <label>Nome Completo</label>
-          <input type="text" id="nomeCompleto" readonly>
+      <!-- ORÇAMENTOS -->
+      <section id="orcamentos" class="content-section">
+        <div class="table-header">
+          <h2>Meus Orçamentos</h2>
+          <button class="btn btn-primary" onclick="novoOrcamento()">+ Solicitar Orçamento</button>
         </div>
-        <div class="form-group">
-          <label>CPF</label>
-          <input type="text" id="cpf" readonly>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Serviço</th>
+                <th>Valor Proposto</th>
+                <th>Data</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody id="orcamentosTable">
+              <tr>
+                <td colspan="5" style="text-align:center;padding:20px;">Carregando orçamentos...</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" id="clientEmail">
-          <button class="btn btn-small" onclick="salvarEmail()">Atualizar Email</button>
+      </section>
+
+      <!-- CONFIGURAÇÕES -->
+      <section id="configuracoes" class="content-section">
+        <div class="config-section">
+          <h3>📋 Meus Dados</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nome</label>
+              <input type="text" id="clientNome" readonly>
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="clientEmail" readonly>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Telefone/WhatsApp</label>
+            <input type="tel" id="clientTelefone">
+            <button class="btn btn-small btn-primary" onclick="salvarTelefone()">🔄 Atualizar</button>
+          </div>
+          <div class="form-group">
+            <label>Endereço Completo</label>
+            <input type="text" id="clientEndereco" readonly>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Telefone/WhatsApp</label>
-          <input type="tel" id="clientTelefone">
-          <button class="btn btn-small" onclick="salvarTelefone()">Atualizar Telefone</button>
-        </div>
-        <div class="form-group">
-          <label>Nova Senha</label>
-          <input type="password" id="novaSenha" placeholder="Mínimo 6 caracteres">
-          <button class="btn btn-small" onclick="salvarSenha()">Alterar Senha</button>
+        
+        <div class="config-section">
+          <h3>🔐 Alterar Senha</h3>
+          <div class="form-group">
+            <label>Nova Senha</label>
+            <input type="password" id="novaSenha" placeholder="Mínimo 6 caracteres">
+          </div>
+          <button class="btn btn-warning" onclick="alterarSenha()">🔐 Alterar Senha</button>
         </div>
       </section>
     </main>
   </div>
 
-  <!-- MODAL CANCELAR -->
-  <div id="cancelarModal" class="modal-overlay" style="display:none;">
-    <div class="modal">
-      <h3>Cancelar Serviço</h3>
-      <p id="cancelarTexto"></p>
-      <div class="modal-actions">
-        <button class="btn btn-danger" onclick="confirmarCancelar()">Confirmar Cancelar</button>
-        <button class="btn btn-secondary" onclick="fecharModal()">Voltar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL REAGENDAR -->
-  <div id="reagendarModal" class="modal-overlay" style="display:none;">
-    <div class="modal">
-      <h3>Reagendar Serviço</h3>
-      <input type="date" id="novaData">
-      <div class="modal-actions">
-        <button class="btn btn-primary" onclick="confirmarReagendar()">Confirmar Reagendar</button>
-        <button class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
-      </div>
-    </div>
-  </div>
-
   <script>
-    // 🔥 LOGOUT 10 MINUTOS
-    let inactivityTimer;
-    function resetTimer() {
-      clearTimeout(inactivityTimer);
-      inactivityTimer = setTimeout(() => {
-        localStorage.clear();
-        alert('🔐 Sessão expirada (10 min inatividade)');
-        window.location.href = 'index.html';
-      }, 10 * 60 * 1000);
-    }
-    ['mousedown','mousemove','keypress','scroll','touchstart','touchmove'].forEach(e=>document.addEventListener(e,resetTimer,true));
-    resetTimer();
-
-    // 🔒 PROTEÇÃO CLIENTE
-    if (!localStorage.getItem('clientLoggedIn')) {
+    // 🔒 PROTEÇÃO
+    if (!localStorage.getItem('clientLoggedIn') || localStorage.getItem('userType') !== 'client') {
       window.location.href = 'index.html';
     }
 
-    // 📊 DADOS CLIENTE
-    let clienteData = JSON.parse(localStorage.getItem('clientData')) || {
-      nome: 'João Silva',
-      cpf: '123.456.789-00',
-      email: localStorage.getItem('clientEmail') || 'cliente@exemplo.com',
-      telefone: '(11) 99999-9999',
-      servicos: [
-        {id: 1, servico: 'Instalação Elétrica Completa', data: '2026-01-10', status: 'confirmado'},
-        {id: 2, servico: 'Manutenção Predial', data: '2026-01-15', status: 'pendente'}
-      ]
-    };
-    localStorage.setItem('clientData', JSON.stringify(clienteData));
+    const API_URL = 'https://api-thiago-pires.YOUR_WORKER.workers.dev'; // ← SUBSTITUA
+    const clientId = localStorage.getItem('clientId');
 
-    // 🔄 CARREGAR DADOS
-    document.getElementById('clientName').textContent = clienteData.nome;
-    document.getElementById('nomeCompleto').value = clienteData.nome;
-    document.getElementById('cpf').value = clienteData.cpf;
-    document.getElementById('clientEmail').value = clienteData.email;
-    document.getElementById('clientTelefone').value = clienteData.telefone;
-    
-    document.getElementById('ativosCount').textContent = clienteData.servicos.filter(s => s.status === 'confirmado').length;
-    document.getElementById('orcamentosCount').textContent = clienteData.servicos.filter(s => s.status === 'pendente').length;
+    // 🚀 CARREGAR DADOS REAIS
+    async function initCliente() {
+      try {
+        showLoading();
+        await Promise.all([
+          carregarClienteDados(),
+          carregarDashboard(),
+          carregarServicos(),
+          carregarOrcamentos()
+        ]);
+        hideLoading();
+      } catch(e) {
+        alert('❌ Erro ao carregar dados. Tente novamente.');
+        logout();
+      }
+    }
 
-    // 📋 TABELA SERVIÇOS
-    function carregarServicos() {
-      const tbody = document.getElementById('servicosTable');
-      tbody.innerHTML = '';
-      clienteData.servicos.forEach(servico => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td data-label="Serviço">${servico.servico}</td>
-          <td data-label="Data">${new Date(servico.data).toLocaleDateString('pt-BR')}</td>
-          <td data-label="Status">
-            <span class="badge ${servico.status === 'confirmado' ? 'badge-success' : 'badge-warning'}">
-              ${servico.status === 'confirmado' ? 'Confirmado' : 'Pendente'}
-            </span>
-          </td>
-          <td data-label="Ações">
-            <button class="btn btn-small btn-warning" onclick="abrirReagendar(${servico.id})">Reagendar</button>
-            <button class="btn btn-small btn-danger" onclick="abrirCancelar(${servico.id}, '${servico.servico}')">Cancelar</button>
-          </td>
-        `;
-        tbody.appendChild(row);
+    // 👤 DADOS CLIENTE
+    async function carregarClienteDados() {
+      const response = await fetch(`${API_URL}/cliente/${clientId}`);
+      const cliente = await response.json();
+      
+      document.getElementById('clientName').textContent = cliente.nome;
+      document.getElementById('clientNome').value = cliente.nome;
+      document.getElementById('clientEmail').value = cliente.email;
+      document.getElementById('clientTelefone').value = cliente.telefone || '';
+      document.getElementById('clientEndereco').value = cliente.endereco || '';
+    }
+
+    // 📊 DASHBOARD REAL
+    async function carregarDashboard() {
+      const [servicosRes, orcamentosRes] = await Promise.all([
+        fetch(`${API_URL}/servicos?cliente_id=${clientId}`),
+        fetch(`${API_URL}/orcamentos?cliente_id=${clientId}`)
+      ]);
+      
+      const servicos = await servicosRes.json();
+      const orcamentos = await orcamentosRes.json();
+      
+      const ativos = servicos.filter(s => s.status === 'confirmado').length;
+      const pendentes = orcamentos.filter(o => o.status === 'pendente').length;
+      
+      document.getElementById('ativosCount').textContent = ativos;
+      document.getElementById('orcamentosCount').textContent = pendentes;
+      document.getElementById('totalServicos').textContent = servicos.length;
+    }
+
+    // 🔧 SERVIÇOS REAIS
+    async function carregarServicos() {
+      const response = await fetch(`${API_URL}/servicos?cliente_id=${clientId}`);
+      const servicos = await response.json();
+      
+      document.getElementById('servicosTable').innerHTML = servicos.length ? 
+        servicos.map(s => `
+          <tr>
+            <td data-label="Serviço">${s.servico}</td>
+            <td data-label="Data">${new Date(s.data).toLocaleDateString('pt-BR')}</td>
+            <td data-label="Status">
+              <span class="badge badge-${getStatusClass(s.status)}">${s.status}</span>
+            </td>
+            <td data-label="Valor">R$ ${s.valor || '0,00'}</td>
+            <td data-label="Ações">
+              <button class="btn btn-small btn-warning" onclick="reagendar(${s.id})">Reagendar</button>
+              <button class="btn btn-small btn-danger" onclick="excluirServico(${s.id})">Excluir</button>
+            </td>
+          </tr>
+        `).join('') : 
+        '<tr><td colspan="5" style="text-align:center;padding:20px;">Nenhum serviço cadastrado</td></tr>';
+    }
+
+    // 💰 ORÇAMENTOS REAIS
+    async function carregarOrcamentos() {
+      const response = await fetch(`${API_URL}/orcamentos?cliente_id=${clientId}`);
+      const orcamentos = await response.json();
+      
+      document.getElementById('orcamentosTable').innerHTML = orcamentos.length ? 
+        orcamentos.map(o => `
+          <tr>
+            <td data-label="Serviço">${o.servico}</td>
+            <td data-label="Valor">R$ ${o.valor?.toFixed(2) || '0,00'}</td>
+            <td data-label="Data">${new Date(o.created_at).toLocaleDateString('pt-BR')}</td>
+            <td data-label="Status">
+              <span class="badge badge-${getStatusClass(o.status)}">${o.status}</span>
+            </td>
+            <td data-label="Ações">
+              <button class="btn btn-small btn-success" onclick="aceitarOrcamento(${o.id})">Aceitar</button>
+              <button class="btn btn-small btn-secondary" onclick="recusarOrcamento(${o.id})">Recusar</button>
+            </td>
+          </tr>
+        `).join('') : 
+        '<tr><td colspan="5" style="text-align:center;padding:20px;">Nenhum orçamento pendente</td></tr>';
+    }
+
+    // NAVEGAÇÃO
+    document.querySelectorAll('.nav-link[data-section]').forEach(link => {
+      link.addEventListener('click', async function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        
+        document.getElementById(section).classList.add('active');
+        this.classList.add('active');
+        
+        if (section === 'servicos') await carregarServicos();
+        if (section === 'orcamentos') await carregarOrcamentos();
       });
+    });
+
+    // AÇÕES
+    async function novoServico() {
+      const servico = prompt('Qual serviço precisa?');
+      if (servico) {
+        await fetch(`${API_URL}/servicos`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cliente_id: clientId,
+            cliente_email: localStorage.getItem('clientEmail'),
+            servico,
+            status: 'solicitado'
+          })
+        });
+        carregarServicos();
+        carregarDashboard();
+        alert('✅ Solicitação enviada ao Thiago!');
+      }
     }
 
-    // 🌐 NAVEGAÇÃO
-    function showSection(section) {
-      document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-      document.getElementById(section).classList.add('active');
-      event.target.closest('.nav-link').classList.add('active');
-      if (section === 'servicos') carregarServicos();
+    async function novoOrcamento() {
+      const servico = prompt('Qual serviço para orçamento?');
+      if (servico) {
+        await fetch(`${API_URL}/orcamentos`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cliente_id: clientId,
+            cliente_email: localStorage.getItem('clientEmail'),
+            servico
+          })
+        });
+        carregarOrcamentos();
+        alert('✅ Orçamento solicitado!');
+      }
     }
 
-    // 🔄 MODAIS
-    let servicoEditando = null;
-    function abrirCancelar(id, nome) {
-      servicoEditando = id;
-      document.getElementById('cancelarTexto').textContent = `Deseja realmente cancelar "${nome}"?`;
-      document.getElementById('cancelarModal').style.display = 'flex';
-    }
-    function abrirReagendar(id) {
-      servicoEditando = id;
-      document.getElementById('reagendarModal').style.display = 'flex';
-      document.getElementById('novaData').value = new Date().toISOString().split('T')[0];
-    }
-    function fecharModal() {
-      document.getElementById('cancelarModal').style.display = 'none';
-      document.getElementById('reagendarModal').style.display = 'none';
-      servicoEditando = null;
-    }
-    function confirmarCancelar() {
-      const servico = clienteData.servicos.find(s => s.id === servicoEditando);
-      servico.status = 'cancelado';
-      localStorage.setItem('clientData', JSON.stringify(clienteData));
-      fecharModal();
-      carregarServicos();
-      alert('✅ Serviço cancelado com sucesso!');
-    }
-    function confirmarReagendar() {
-      const servico = clienteData.servicos.find(s => s.id === servicoEditando);
-      servico.data = document.getElementById('novaData').value;
-      localStorage.setItem('clientData', JSON.stringify(clienteData));
-      fecharModal();
-      carregarServicos();
-      alert('✅ Serviço reagendado!');
-    }
-
-    // 👤 EDITAR PERFIL
-    function salvarEmail() {
-      clienteData.email = document.getElementById('clientEmail').value;
-      localStorage.setItem('clientEmail', clienteData.email);
-      localStorage.setItem('clientData', JSON.stringify(clienteData));
-      alert('✅ Email atualizado!');
-    }
-    function salvarTelefone() {
-      clienteData.telefone = document.getElementById('clientTelefone').value;
-      localStorage.setItem('clientData', JSON.stringify(clienteData));
+    async function salvarTelefone() {
+      const telefone = document.getElementById('clientTelefone').value;
+      await fetch(`${API_URL}/cliente/${clientId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ telefone })
+      });
       alert('✅ Telefone atualizado!');
     }
-    function salvarSenha() {
+
+    async function alterarSenha() {
       const novaSenha = document.getElementById('novaSenha').value;
-      if (novaSenha.length < 6) return alert('❌ Senha deve ter 6+ caracteres!');
-      localStorage.setItem('clientSenha', btoa(novaSenha));
+      if (novaSenha.length < 6) return alert('❌ Senha deve ter 6+ caracteres');
+      
+      await fetch(`${API_URL}/cliente/${clientId}/senha`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ senha: btoa(novaSenha) })
+      });
       document.getElementById('novaSenha').value = '';
       alert('✅ Senha alterada!');
     }
 
-    function novoServico() {
-      alert('📞 Thiago entrará em contato para novo serviço!');
+    async function excluirServico(id) {
+      if (confirm('Excluir este serviço?')) {
+        await fetch(`${API_URL}/servicos/${id}/delete`, { method: 'POST' });
+        carregarServicos();
+        carregarDashboard();
+        alert('✅ Serviço excluído (recuperável por 30 dias)');
+      }
     }
+
     function logout() {
-      localStorage.clear();
+      localStorage.removeItem('clientLoggedIn');
+      localStorage.removeItem('clientId');
+      localStorage.removeItem('clientEmail');
       window.location.href = 'index.html';
     }
 
+    // UTILITÁRIOS
+    function getStatusClass(status) {
+      const classes = {
+        'confirmado': 'success',
+        'pendente': 'warning',
+        'solicitado': 'info',
+        'cancelado': 'danger'
+      };
+      return classes[status] || 'muted';
+    }
+
+    function showLoading() {
+      document.body.style.opacity = '0.7';
+    }
+    function hideLoading() {
+      document.body.style.opacity = '1';
+    }
+
     // 🚀 INICIALIZAR
-    carregarServicos();
+    initCliente();
   </script>
 </body>
 </html>
