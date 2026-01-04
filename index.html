@@ -7,107 +7,67 @@
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-  <!-- EFEITOS DE FUNDO -->
-  <div class="background-effects">
-    <div class="glow-orb glow-orb-1"></div>
-    <div class="glow-orb glow-orb-2"></div>
-    <div class="glow-orb glow-orb-3"></div>
-  </div>
-
-  <div class="login-container">
-    <div class="login-card">
-      <div class="login-header">
-        <div class="logo-icon">⚡</div>
-        <h2>Thiago Pires</h2>
-        <p>Acesse sua conta</p>
-      </div>
-
-      <form id="loginForm">
-        <div class="input-wrapper">
-          <input type="email" id="email" name="email" required>
-          <label for="email">Email</label>
+  <div class="app-container">
+    <div class="center-wrapper">
+      <div class="card login-card">
+        <div class="login-header">
+          <div class="icon-bolt-large">⚡</div>
+          <h1>Thiago Pires</h1>
+          <p>Acesse sua conta</p>
         </div>
 
-        <div class="input-wrapper password-wrapper">
-          <input type="password" id="senha" name="senha" required>
-          <label for="senha">Senha</label>
-          <button type="button" class="password-toggle" id="toggleSenha" tabindex="-1">
-            <span class="toggle-icon" id="eyeIcon">👁️</span>
-          </button>
+        <form id="loginForm">
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" name="email" placeholder="admin@thiagopires.com ou seu email" required>
+          </div>
+          <div class="form-group">
+            <label>Senha *</label>
+            <input type="password" name="senha" placeholder="Digite sua senha" required>
+          </div>
+          <button type="submit" class="btn btn-primary full">ENTRAR</button>
+        </form>
+
+        <div class="login-footer">
+          <p>Não tem cadastro? <a href="cadastro.html">Faça seu cadastro</a></p>
+          <p><strong>👨‍💼 Admin:</strong> admin@thiagopires.com (qualquer senha)</p>
+          <p><small>🔐 Logout auto: 10 min inatividade</small></p>
         </div>
-
-        <button type="submit" class="login-btn" id="loginBtn">
-          <span class="btn-glow"></span>
-          <span class="btn-text">ENTRAR</span>
-          <div class="btn-loader"></div>
-        </button>
-      </form>
-
-      <div class="divider neon-divider">
-        <span></span>
-      </div>
-
-      <div class="signup-link">
-        <p>Novo cliente? <a href="cadastro.html">Cadastre-se</a></p>
       </div>
     </div>
   </div>
 
   <script>
-    // Toggle senha VISÍVEL/INVISÍVEL
-    document.getElementById('toggleSenha').addEventListener('click', function(e) {
-      e.preventDefault();
-      const senhaInput = document.getElementById('senha');
-      const eyeIcon = document.getElementById('eyeIcon');
-      
-      if (senhaInput.type === 'password') {
-        senhaInput.type = 'text';
-        eyeIcon.textContent = '🙈';
-      } else {
-        senhaInput.type = 'password';
-        eyeIcon.textContent = '👁️';
-      }
-    });
-
-    // Detecta quando input tem valor para mover label
-    function handleInput(input) {
-      if (input.value.length > 0) {
-        input.classList.add('has-value');
-      } else {
-        input.classList.remove('has-value');
-      }
+    // 🔥 LOGOUT 10 MINUTOS
+    let inactivityTimer;
+    function resetTimer() {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(logoutAuto, 10 * 60 * 1000);
     }
+    function logoutAuto() {
+      localStorage.clear();
+      alert('🔐 Sessão expirada (10 min)');
+      window.location.href = 'index.html';
+    }
+    ['mousedown','mousemove','keypress','scroll','touchstart','touchmove'].forEach(e=>document.addEventListener(e,resetTimer,true));
+    resetTimer();
 
-    document.getElementById('email').addEventListener('input', function() {
-      handleInput(this);
-    });
-
-    document.getElementById('senha').addEventListener('input', function() {
-      handleInput(this);
-    });
-
-    // Login form - ADMIN
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
+    // 🔒 LOGIN ADMIN vs CLIENTE
+    document.getElementById('loginForm').addEventListener('submit',function(e){
       e.preventDefault();
-      const btn = document.getElementById('loginBtn');
-      const email = document.getElementById('email').value;
-      const senha = document.getElementById('senha').value;
+      const email=document.querySelector('input[name="email"]').value.trim().toLowerCase();
+      const senha=document.querySelector('input[name="senha"]').value;
       
-      // Validação básica
-      if (!email || !senha) {
-        alert('Preencha email e senha');
-        btn.classList.remove('loading');
-        return;
+      if(email==='admin@thiagopires.com'){
+        localStorage.setItem('adminLoggedIn','true');localStorage.setItem('userType','admin');
+        alert('✅ Admin OK!');window.location.href='painel.html';
+      }else{
+        localStorage.setItem('clientLoggedIn','true');localStorage.setItem('clientEmail',email);
+        localStorage.setItem('userType','client');localStorage.setItem('clientSenha',btoa(senha));
+        alert('✅ Painel Cliente!');window.location.href='cliente.html';
       }
-      
-      btn.classList.add('loading');
-      
-      // Simula login ADMIN (substitua pela sua API real)
-      setTimeout(() => {
-        localStorage.setItem('adminLoggedIn', 'true');
-        window.location.href = 'painel.html';
-      }, 1500);
     });
+    document.addEventListener('keypress',e=>e.key==='Enter'?document.getElementById('loginForm').dispatchEvent(new Event('submit')):0);
   </script>
 </body>
 </html>
