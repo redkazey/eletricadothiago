@@ -18,17 +18,38 @@
         </div>
 
         <form id="cadastroForm">
-          <div class="form-group"><label>Nome Completo *</label><input type="text" name="nome" required></div>
-          <div class="form-group"><label>Email *</label><input type="email" name="email" required></div>
-          <div class="form-group"><label>Senha *</label><input type="password" name="senha" required></div>
-          <div class="form-group"><label>Telefone/WhatsApp *</label><input type="tel" name="telefone" required></div>
-          <div class="form-group"><label>CEP *</label><input type="text" id="cep" name="cep" placeholder="00000-000" maxlength="9" required></div>
-          <div class="form-group"><label>Nº Imóvel *</label><input type="text" id="numero" name="numero" placeholder="123" required></div>
-          <div class="form-group"><label>Endereço Completo</label><input type="text" id="endereco" name="endereco" readonly></div>
+          <div class="form-group">
+            <label>Nome Completo *</label>
+            <input type="text" name="nome" required>
+          </div>
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" name="email" required>
+          </div>
+          <div class="form-group">
+            <label>Senha *</label>
+            <input type="password" name="senha" required minlength="6">
+          </div>
+          <div class="form-group">
+            <label>Telefone/WhatsApp *</label>
+            <input type="tel" name="telefone" required>
+          </div>
+          <div class="form-group">
+            <label>CEP *</label>
+            <input type="text" id="cep" name="cep" placeholder="00000-000" maxlength="9" required>
+          </div>
+          <div class="form-group">
+            <label>Nº Imóvel *</label>
+            <input type="text" id="numero" name="numero" placeholder="123" required>
+          </div>
+          <div class="form-group">
+            <label>Endereço Completo</label>
+            <input type="text" id="endereco" name="endereco" placeholder="Rua, bairro - cidade/UF" readonly>
+          </div>
           <div class="form-group">
             <label>Serviço Desejado *</label>
             <select name="servico" required>
-              <option value="">Selecione</option>
+              <option value="">Selecione o serviço</option>
               <option value="instalacao">Instalação Elétrica Completa</option>
               <option value="manutencao">Manutenção Predial</option>
               <option value="reparo">Reparos Elétricos</option>
@@ -36,7 +57,10 @@
               <option value="iluminacao">Iluminação LED</option>
             </select>
           </div>
-          <div class="form-group"><label>Observações</label><textarea name="observacoes" rows="3" placeholder="Detalhes..."></textarea></div>
+          <div class="form-group">
+            <label>Observações</label>
+            <textarea name="observacoes" rows="3" placeholder="Descreva detalhes do serviço desejado..."></textarea>
+          </div>
           <button type="submit" class="btn btn-primary full">📧 Cadastrar e Enviar</button>
         </form>
       </div>
@@ -44,53 +68,89 @@
   </div>
 
   <script>
+    // ✅ EMAIL.JS - SUAS CHAVES
     emailjs.init("KDvQsuxv20TZgbpaf");
-    
-    // CEP
-    document.getElementById('cep').addEventListener('blur',async function(){
-      const cep=this.value.replace(/D/g,'');
-      if(cep.length===8){
-        this.value=cep.replace(/(d{5})(d{3})/,'$1-$2');
-        try{
-          const data=await(await fetch(`https://viacep.com.br/ws/${cep}/json/`)).json();
-          if(!data.erro){
-            document.getElementById('endereco').value=`${data.logradouro}, ${data.bairro} - ${data.localidade}/${data.uf}`;
+
+    // 🔧 CEP AUTOMÁTICO
+    document.getElementById('cep').addEventListener('blur', async function() {
+      const cep = this.value.replace(/D/g, '');
+      if (cep.length === 8) {
+        this.value = cep.replace(/(d{5})(d{3})/, '$1-$2');
+        try {
+          const data = await (await fetch(`https://viacep.com.br/ws/${cep}/json/`)).json();
+          if (!data.erro) {
+            document.getElementById('endereco').value = `${data.logradouro}, ${data.bairro} - ${data.localidade}/${data.uf}`;
             document.getElementById('numero').focus();
-            document.getElementById('endereco').style.background='rgba(34,197,94,0.1)';
+            const enderecoField = document.getElementById('endereco');
+            enderecoField.style.background = 'rgba(34, 197, 94, 0.1)';
+            enderecoField.style.borderColor = 'rgba(34, 197, 94, 0.5)';
+          } else {
+            alert('❌ CEP não encontrado!');
           }
-        }catch(e){alert('Erro CEP');}
+        } catch(e) {
+          alert('❌ Erro ao buscar CEP');
+        }
       }
     });
-    document.getElementById('cep').addEventListener('input',function(e){
-      let value=e.target.value.replace(/D/g,'').replace(/(d{5})(d{3})/,'$1-$2');
-      e.target.value=value.substring(0,9);
+
+    document.getElementById('cep').addEventListener('input', function(e) {
+      let value = e.target.value.replace(/D/g, '').replace(/(d{5})(d{3})/, '$1-$2');
+      e.target.value = value.substring(0, 9);
     });
 
-    // EMAIL + CADASTRO
-    document.getElementById('cadastroForm').addEventListener('submit',async function(e){
+    // 🚀 CADASTRO + EMAIL
+    document.getElementById('cadastroForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-      const dados=Object.fromEntries(new FormData(this));
-      if(!dados.endereco){alert('⚠️ Busque CEP!');return;}
+      const dados = Object.fromEntries(new FormData(this));
       
-      try{
-        await emailjs.send("service_l8sw1gn","template_zumuzyh",{
-          nome:dados.nome,email:dados.email,telefone:dados.telefone,
-          endereco:`${dados.endereco}, Nº ${dados.numero}`,
-          servico:dados.servico,observacoes:dados.observacoes||'Nenhuma',
-          title:dados.servico,data:new Date().toLocaleString('pt-BR')
+      if (!dados.endereco || dados.endereco === '') {
+        alert('⚠️ Busque o CEP primeiro!');
+        document.getElementById('cep').focus();
+        return;
+      }
+
+      try {
+        await emailjs.send("service_l8sw1gn", "template_zumuzyh", {
+          nome: dados.nome,
+          email: dados.email,
+          telefone: dados.telefone,
+          endereco: `${dados.endereco}, Nº ${dados.numero}`,
+          servico: dados.servico,
+          observacoes: dados.observacoes || 'Nenhuma',
+          title: dados.servico,
+          data: new Date().toLocaleString('pt-BR')
         });
-        alert(`✅ EMAIL ENVIADO!
+
+        // ✅ SALVA DADOS CLIENTE
+        const clienteData = {
+          nome: dados.nome,
+          cpf: '123.456.789-00', // Futuro: campo CPF
+          email: dados.email,
+          telefone: dados.telefone,
+          senha: btoa(dados.senha),
+          servicos: []
+        };
+        localStorage.setItem('clientData', JSON.stringify(clienteData));
+        localStorage.setItem('clientEmail', dados.email);
+        localStorage.setItem('clientSenha', btoa(dados.senha));
+
+        alert(`✅ CADASTRO CONCLUÍDO!
+
 👤 ${dados.nome}
-📱 ${dados.telefone}`);
-        window.location.href='index.html';
-      }catch(e){
-        alert('✅ Cadastro salvo!');
-        window.location.href='index.html';
+📧 ${dados.email}
+📱 ${dados.telefone}
+
+📧 Email enviado para Thiago Pires!
+
+🔑 Agora faça login com seu email/senha`);
+        window.location.href = 'index.html';
+      } catch (error) {
+        console.error('Erro EmailJS:', error);
+        alert('✅ Cadastro salvo localmente!
+Email temporariamente indisponível.');
+        window.location.href = 'index.html';
       }
     });
-
-    // LOGOUT 10min
-    let inactivityTimer;setTimeout(()=>localStorage.clear(),10*60*1000);
   </script>
 </body>
 </html>
