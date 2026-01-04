@@ -14,18 +14,10 @@
         <h2>Thiago Pires</h2>
       </div>
       <nav class="sidebar-nav">
-        <a href="#" class="nav-link active" onclick="showSection('dashboard')">
-          <span>📊</span> Dashboard
-        </a>
-        <a href="#" class="nav-link" onclick="showSection('servicos')">
-          <span>🔧</span> Meus Serviços
-        </a>
-        <a href="#" class="nav-link" onclick="showSection('perfil')">
-          <span>👤</span> Meu Perfil
-        </a>
-        <a href="#" class="nav-link" onclick="logout()">
-          <span>🚪</span> Sair
-        </a>
+        <a href="#" class="nav-link active" onclick="showSection('dashboard')"><span>📊</span> Dashboard</a>
+        <a href="#" class="nav-link" onclick="showSection('servicos')"><span>🔧</span> Meus Serviços</a>
+        <a href="#" class="nav-link" onclick="showSection('perfil')"><span>👤</span> Meu Perfil</a>
+        <a href="#" class="nav-link" onclick="logout()"><span>🚪</span> Sair</a>
       </nav>
     </aside>
 
@@ -49,17 +41,17 @@
             <div class="badge badge-muted" id="orcamentosCount">0</div>
           </div>
           <div class="card">
-            <h3>Próximos</h3>
+            <h3>Próximos 7 dias</h3>
             <div class="badge badge-warning" id="proximosCount">0</div>
           </div>
         </div>
       </section>
 
-      <!-- MEUS SERVIÇOS -->
+      <!-- SERVIÇOS -->
       <section id="servicos" class="content-section">
         <div class="table-header">
           <h2>Meus Serviços</h2>
-          <button class="btn btn-primary" onclick="novoServico()">+ Novo Serviço</button>
+          <button class="btn btn-primary" onclick="novoServico()">+ Solicitar Novo</button>
         </div>
         <div class="table-container">
           <table>
@@ -71,14 +63,12 @@
                 <th>Ações</th>
               </tr>
             </thead>
-            <tbody id="servicosTable">
-              <!-- Serviços carregados dinamicamente -->
-            </tbody>
+            <tbody id="servicosTable"></tbody>
           </table>
         </div>
       </section>
 
-      <!-- MEU PERFIL -->
+      <!-- PERFIL -->
       <section id="perfil" class="content-section">
         <div class="form-group">
           <label>Nome Completo</label>
@@ -100,7 +90,7 @@
         </div>
         <div class="form-group">
           <label>Nova Senha</label>
-          <input type="password" id="novaSenha">
+          <input type="password" id="novaSenha" placeholder="Mínimo 6 caracteres">
           <button class="btn btn-small" onclick="salvarSenha()">Alterar Senha</button>
         </div>
       </section>
@@ -108,73 +98,75 @@
   </div>
 
   <!-- MODAL CANCELAR -->
-  <div id="cancelarModal" class="modal-overlay">
+  <div id="cancelarModal" class="modal-overlay" style="display:none;">
     <div class="modal">
       <h3>Cancelar Serviço</h3>
       <p id="cancelarTexto"></p>
       <div class="modal-actions">
-        <button class="btn btn-danger" onclick="confirmarCancelar()">Confirmar</button>
-        <button class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
+        <button class="btn btn-danger" onclick="confirmarCancelar()">Confirmar Cancelar</button>
+        <button class="btn btn-secondary" onclick="fecharModal()">Voltar</button>
       </div>
     </div>
   </div>
 
   <!-- MODAL REAGENDAR -->
-  <div id="reagendarModal" class="modal-overlay">
+  <div id="reagendarModal" class="modal-overlay" style="display:none;">
     <div class="modal">
       <h3>Reagendar Serviço</h3>
       <input type="date" id="novaData">
       <div class="modal-actions">
-        <button class="btn btn-primary" onclick="confirmarReagendar()">Reagendar</button>
+        <button class="btn btn-primary" onclick="confirmarReagendar()">Confirmar Reagendar</button>
         <button class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
       </div>
     </div>
   </div>
 
   <script>
-    // ✅ DADOS CLIENTE (localStorage simula banco)
-    const clienteData = JSON.parse(localStorage.getItem('clientData')) || {
+    // 🔥 LOGOUT 10 MINUTOS
+    let inactivityTimer;
+    function resetTimer() {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        localStorage.clear();
+        alert('🔐 Sessão expirada (10 min inatividade)');
+        window.location.href = 'index.html';
+      }, 10 * 60 * 1000);
+    }
+    ['mousedown','mousemove','keypress','scroll','touchstart','touchmove'].forEach(e=>document.addEventListener(e,resetTimer,true));
+    resetTimer();
+
+    // 🔒 PROTEÇÃO CLIENTE
+    if (!localStorage.getItem('clientLoggedIn')) {
+      window.location.href = 'index.html';
+    }
+
+    // 📊 DADOS CLIENTE
+    let clienteData = JSON.parse(localStorage.getItem('clientData')) || {
       nome: 'João Silva',
       cpf: '123.456.789-00',
       email: localStorage.getItem('clientEmail') || 'cliente@exemplo.com',
       telefone: '(11) 99999-9999',
       servicos: [
-        {
-          id: 1,
-          servico: 'Instalação Elétrica Completa',
-          data: '2026-01-10',
-          status: 'confirmado'
-        },
-        {
-          id: 2,
-          servico: 'Manutenção Predial',
-          data: '2026-01-15',
-          status: 'pendente'
-        }
+        {id: 1, servico: 'Instalação Elétrica Completa', data: '2026-01-10', status: 'confirmado'},
+        {id: 2, servico: 'Manutenção Predial', data: '2026-01-15', status: 'pendente'}
       ]
     };
+    localStorage.setItem('clientData', JSON.stringify(clienteData));
 
-    // ✅ PROTEÇÃO - APENAS CLIENTE
-    if (!localStorage.getItem('clientLoggedIn')) {
-      window.location.href = 'index.html';
-    }
-
-    // Carregar dados
+    // 🔄 CARREGAR DADOS
     document.getElementById('clientName').textContent = clienteData.nome;
     document.getElementById('nomeCompleto').value = clienteData.nome;
     document.getElementById('cpf').value = clienteData.cpf;
     document.getElementById('clientEmail').value = clienteData.email;
     document.getElementById('clientTelefone').value = clienteData.telefone;
-
-    // Contadores dashboard
+    
     document.getElementById('ativosCount').textContent = clienteData.servicos.filter(s => s.status === 'confirmado').length;
     document.getElementById('orcamentosCount').textContent = clienteData.servicos.filter(s => s.status === 'pendente').length;
 
-    // Carregar tabela serviços
+    // 📋 TABELA SERVIÇOS
     function carregarServicos() {
       const tbody = document.getElementById('servicosTable');
       tbody.innerHTML = '';
-      
       clienteData.servicos.forEach(servico => {
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -194,44 +186,40 @@
       });
     }
 
-    // Navegação
+    // 🌐 NAVEGAÇÃO
     function showSection(section) {
       document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
       document.getElementById(section).classList.add('active');
-      event.target.classList.add('active');
-      
+      event.target.closest('.nav-link').classList.add('active');
       if (section === 'servicos') carregarServicos();
     }
 
-    // Modais
+    // 🔄 MODAIS
     let servicoEditando = null;
     function abrirCancelar(id, nome) {
       servicoEditando = id;
-      document.getElementById('cancelarTexto').textContent = `Deseja cancelar "${nome}"?`;
+      document.getElementById('cancelarTexto').textContent = `Deseja realmente cancelar "${nome}"?`;
       document.getElementById('cancelarModal').style.display = 'flex';
     }
-
     function abrirReagendar(id) {
       servicoEditando = id;
       document.getElementById('reagendarModal').style.display = 'flex';
+      document.getElementById('novaData').value = new Date().toISOString().split('T')[0];
     }
-
     function fecharModal() {
       document.getElementById('cancelarModal').style.display = 'none';
       document.getElementById('reagendarModal').style.display = 'none';
       servicoEditando = null;
     }
-
     function confirmarCancelar() {
       const servico = clienteData.servicos.find(s => s.id === servicoEditando);
       servico.status = 'cancelado';
       localStorage.setItem('clientData', JSON.stringify(clienteData));
       fecharModal();
       carregarServicos();
-      alert('✅ Serviço cancelado!');
+      alert('✅ Serviço cancelado com sucesso!');
     }
-
     function confirmarReagendar() {
       const servico = clienteData.servicos.find(s => s.id === servicoEditando);
       servico.data = document.getElementById('novaData').value;
@@ -241,26 +229,21 @@
       alert('✅ Serviço reagendado!');
     }
 
-    // Atualizar perfil
+    // 👤 EDITAR PERFIL
     function salvarEmail() {
       clienteData.email = document.getElementById('clientEmail').value;
       localStorage.setItem('clientEmail', clienteData.email);
       localStorage.setItem('clientData', JSON.stringify(clienteData));
       alert('✅ Email atualizado!');
     }
-
     function salvarTelefone() {
       clienteData.telefone = document.getElementById('clientTelefone').value;
       localStorage.setItem('clientData', JSON.stringify(clienteData));
       alert('✅ Telefone atualizado!');
     }
-
     function salvarSenha() {
       const novaSenha = document.getElementById('novaSenha').value;
-      if (novaSenha.length < 6) {
-        alert('❌ Senha deve ter 6+ caracteres!');
-        return;
-      }
+      if (novaSenha.length < 6) return alert('❌ Senha deve ter 6+ caracteres!');
       localStorage.setItem('clientSenha', btoa(novaSenha));
       document.getElementById('novaSenha').value = '';
       alert('✅ Senha alterada!');
@@ -269,14 +252,12 @@
     function novoServico() {
       alert('📞 Thiago entrará em contato para novo serviço!');
     }
-
     function logout() {
-      localStorage.removeItem('clientLoggedIn');
-      localStorage.removeItem('clientEmail');
+      localStorage.clear();
       window.location.href = 'index.html';
     }
 
-    // Inicializar
+    // 🚀 INICIALIZAR
     carregarServicos();
   </script>
 </body>
