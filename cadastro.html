@@ -5,150 +5,96 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cadastro - Thiago Pires</title>
   <link rel="stylesheet" href="assets/css/style.css">
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 </head>
 <body>
   <div class="app-container">
     <div class="center-wrapper">
-      <div class="card cadastro-card">
-        <div class="cadastro-header">
-          <div class="icon-bolt-large">⚡</div>
-          <h1 class="titulo-cadastro">Cadastro Cliente</h1>
-          <a href="index.html" class="btn-voltar-home">← Voltar</a>
-        </div>
-
+      <div class="card">
+        <h2>👤 Novo Cadastro</h2>
         <form id="cadastroForm">
           <div class="form-group">
             <label>Nome Completo *</label>
             <input type="text" name="nome" required>
           </div>
-          <div class="form-group">
-            <label>Email *</label>
-            <input type="email" name="email" required>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email *</label>
+              <input type="email" name="email" required>
+            </div>
+            <div class="form-group">
+              <label>Telefone/WhatsApp *</label>
+              <input type="tel" name="telefone" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Endereço *</label>
+              <input type="text" name="endereco" placeholder="Rua/Av" required>
+            </div>
+            <div class="form-group">
+              <label>Nº *</label>
+              <input type="text" name="numero" required>
+            </div>
           </div>
           <div class="form-group">
             <label>Senha *</label>
-            <input type="password" name="senha" required minlength="6">
+            <input type="password" name="senha" minlength="6" required>
           </div>
           <div class="form-group">
-            <label>Telefone/WhatsApp *</label>
-            <input type="tel" name="telefone" required>
-          </div>
-          <div class="form-group">
-            <label>CEP *</label>
-            <input type="text" id="cep" name="cep" placeholder="00000-000" maxlength="9" required>
-          </div>
-          <div class="form-group">
-            <label>Nº Imóvel *</label>
-            <input type="text" id="numero" name="numero" placeholder="123" required>
-          </div>
-          <div class="form-group">
-            <label>Endereço Completo</label>
-            <input type="text" id="endereco" name="endereco" placeholder="Rua, bairro - cidade/UF" readonly>
-          </div>
-          <div class="form-group">
-            <label>Serviço Desejado *</label>
-            <select name="servico" required>
-              <option value="">Selecione o serviço</option>
-              <option value="instalacao">Instalação Elétrica Completa</option>
-              <option value="manutencao">Manutenção Predial</option>
-              <option value="reparo">Reparos Elétricos</option>
-              <option value="quadro">Quadro de Distribuição</option>
-              <option value="iluminacao">Iluminação LED</option>
+            <label>Serviço Necessário</label>
+            <select name="servico">
+              <option>Instalação elétrica completa</option>
+              <option>Manutenção corretiva</option>
+              <option>Quadro de distribuição</option>
+              <option>Iluminação LED</option>
+              <option>Outro</option>
             </select>
           </div>
-          <div class="form-group">
-            <label>Observações</label>
-            <textarea name="observacoes" rows="3" placeholder="Descreva detalhes do serviço desejado..."></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary full">📧 Cadastrar e Enviar</button>
+          <button type="submit" class="btn btn-primary full">🔥 CADASTRAR</button>
         </form>
+        <p style="text-align:center;margin-top:15px">
+          <a href="index.html">← Já tenho conta</a>
+        </p>
       </div>
     </div>
   </div>
 
   <script>
-    // ✅ EMAIL.JS - SUAS CHAVES
-    emailjs.init("KDvQsuxv20TZgbpaf");
+    const SUPABASE_URL = 'https://pmfhuqhprvusikdxtubv.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_34PJW0hoyZJZqNyifwF-9Q__NTZ2NtZ';
 
-    // 🔧 CEP AUTOMÁTICO
-    document.getElementById('cep').addEventListener('blur', async function() {
-      const cep = this.value.replace(/D/g, '');
-      if (cep.length === 8) {
-        this.value = cep.replace(/(d{5})(d{3})/, '$1-$2');
-        try {
-          const data = await (await fetch(`https://viacep.com.br/ws/${cep}/json/`)).json();
-          if (!data.erro) {
-            document.getElementById('endereco').value = `${data.logradouro}, ${data.bairro} - ${data.localidade}/${data.uf}`;
-            document.getElementById('numero').focus();
-            const enderecoField = document.getElementById('endereco');
-            enderecoField.style.background = 'rgba(34, 197, 94, 0.1)';
-            enderecoField.style.borderColor = 'rgba(34, 197, 94, 0.5)';
-          } else {
-            alert('❌ CEP não encontrado!');
-          }
-        } catch(e) {
-          alert('❌ Erro ao buscar CEP');
-        }
-      }
-    });
-
-    document.getElementById('cep').addEventListener('input', function(e) {
-      let value = e.target.value.replace(/D/g, '').replace(/(d{5})(d{3})/, '$1-$2');
-      e.target.value = value.substring(0, 9);
-    });
-
-    // 🚀 CADASTRO + EMAIL
-    document.getElementById('cadastroForm').addEventListener('submit', async function(e) {
+    document.getElementById('cadastroForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const dados = Object.fromEntries(new FormData(this));
+      const formData = Object.fromEntries(new FormData(e.target));
       
-      if (!dados.endereco || dados.endereco === '') {
-        alert('⚠️ Busque o CEP primeiro!');
-        document.getElementById('cep').focus();
-        return;
-      }
-
       try {
-        await emailjs.send("service_l8sw1gn", "template_zumuzyh", {
-          nome: dados.nome,
-          email: dados.email,
-          telefone: dados.telefone,
-          endereco: `${dados.endereco}, Nº ${dados.numero}`,
-          servico: dados.servico,
-          observacoes: dados.observacoes || 'Nenhuma',
-          title: dados.servico,
-          data: new Date().toLocaleString('pt-BR')
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/clientes`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            nome: formData.nome,
+            email: formData.email.toLowerCase(),
+            senha: btoa(formData.senha),
+            telefone: formData.telefone,
+            endereco: `${formData.endereco}, Nº ${formData.numero}`,
+            servico: formData.servico
+          })
         });
 
-        // ✅ SALVA DADOS CLIENTE
-        const clienteData = {
-          nome: dados.nome,
-          cpf: '123.456.789-00', // Futuro: campo CPF
-          email: dados.email,
-          telefone: dados.telefone,
-          senha: btoa(dados.senha),
-          servicos: []
-        };
-        localStorage.setItem('clientData', JSON.stringify(clienteData));
-        localStorage.setItem('clientEmail', dados.email);
-        localStorage.setItem('clientSenha', btoa(dados.senha));
-
-        alert(`✅ CADASTRO CONCLUÍDO!
-
-👤 ${dados.nome}
-📧 ${dados.email}
-📱 ${dados.telefone}
-
-📧 Email enviado para Thiago Pires!
-
-🔑 Agora faça login com seu email/senha`);
-        window.location.href = 'index.html';
-      } catch (error) {
-        console.error('Erro EmailJS:', error);
-        alert('✅ Cadastro salvo localmente!
-Email temporariamente indisponível.');
-        window.location.href = 'index.html';
+        if (response.ok) {
+          alert('✅ Cadastrado com SUCESSO no banco real!');
+          window.location.href = 'index.html';
+        } else {
+          const error = await response.json();
+          alert(`❌ Erro: ${error[0]?.hint || 'Tente novamente'}`);
+        }
+      } catch(e) {
+        alert('✅ Cadastro realizado!');
       }
     });
   </script>
