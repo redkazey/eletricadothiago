@@ -5,9 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin - Thiago Pires</title>
   <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* CSS CORRIGIDO PARA MENU FUNCIONAR */
+    .content-section { display: none; }
+    .content-section.active { display: block; }
+    .nav-link.active { background: var(--primary-color); color: white; }
+    .table-container { overflow-x: auto; }
+    .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+    .card { padding: 1.5rem; border-radius: 12px; }
+    .badge { padding: 0.5rem 1rem; border-radius: 20px; font-weight: bold; }
+    .btn { padding: 0.5rem 1rem; border: none; border-radius: 8px; cursor: pointer; }
+    .btn-primary { background: var(--primary-color); color: white; }
+    .btn-danger { background: #dc3545; color: white; }
+    .btn-small { padding: 0.25rem 0.75rem; font-size: 0.875rem; }
+  </style>
 </head>
 <body>
   <div class="app-container">
+    <!-- SIDEBAR CORRIGIDA -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <div class="icon-bolt">⚡</div>
@@ -27,8 +42,8 @@
       <header class="main-header">
         <h1>Painel Admin</h1>
         <div class="user-info">
-          <span>ADMIN</span>
-          <button onclick="logout()" class="btn-logout">Sair</button>
+          <span>🔐 ADMIN</span>
+          <button class="btn-logout" onclick="logout()">Sair</button>
         </div>
       </header>
 
@@ -57,14 +72,23 @@
       <!-- CLIENTES -->
       <section id="clientes" class="content-section">
         <div class="table-header">
-          <h2>Todos Clientes</h2>
+          <h2>👥 Todos os Clientes</h2>
         </div>
         <div class="table-container">
           <table>
             <thead>
-              <tr><th>Nome</th><th>Email</th><th>Telefone</th><th>Serviço</th><th>Data</th><th>Ações</th></tr>
+              <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th>Serviço</th>
+                <th>Data Cadastro</th>
+                <th>Ações</th>
+              </tr>
             </thead>
-            <tbody id="clientesTable"></tbody>
+            <tbody id="clientesTable">
+              <tr><td colspan="6" style="text-align:center;">Carregando...</td></tr>
+            </tbody>
           </table>
         </div>
       </section>
@@ -72,14 +96,47 @@
       <!-- SERVIÇOS -->
       <section id="servicos" class="content-section">
         <div class="table-header">
-          <h2>Todos Serviços</h2>
+          <h2>🔧 Todos os Serviços</h2>
         </div>
         <div class="table-container">
           <table>
             <thead>
-              <tr><th>Cliente</th><th>Serviço</th><th>Data</th><th>Status</th><th>Valor</th></tr>
+              <tr>
+                <th>Cliente</th>
+                <th>Serviço</th>
+                <th>Data</th>
+                <th>Status</th>
+                <th>Valor</th>
+                <th>Ações</th>
+              </tr>
             </thead>
-            <tbody id="servicosAdminTable"></tbody>
+            <tbody id="servicosTable">
+              <tr><td colspan="6" style="text-align:center;">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ORÇAMENTOS -->
+      <section id="orcamentos" class="content-section">
+        <div class="table-header">
+          <h2>💰 Orçamentos Pendentes</h2>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Serviço</th>
+                <th>Valor Proposto</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="orcamentosTable">
+              <tr><td colspan="6" style="text-align:center;">Carregando...</td></tr>
+            </tbody>
           </table>
         </div>
       </section>
@@ -87,77 +144,201 @@
       <!-- RELATÓRIOS -->
       <section id="relatorios" class="content-section">
         <div class="config-section">
-          <h3>📊 Relatórios</h3>
-          <button class="btn btn-primary" onclick="gerarPDF('semanal')">📋 Semanal PDF</button>
-          <button class="btn btn-primary" onclick="gerarPDF('mensal')">📅 Mensal PDF</button>
-          <button class="btn btn-success" onclick="exportCSV()">📊 Export CSV</button>
+          <h2>📈 Relatórios</h2>
+          <div style="margin: 1rem 0;">
+            <button class="btn btn-primary" onclick="gerarPDF('semanal')">📋 Relatório Semanal PDF</button>
+            <button class="btn btn-primary" onclick="gerarPDF('mensal')">📅 Relatório Mensal PDF</button>
+            <button class="btn btn-success" onclick="exportCSV()">📊 Exportar CSV</button>
+          </div>
+          <div id="relatorioPreview" style="margin-top: 2rem;"></div>
         </div>
-        <div id="relatorioPreview"></div>
       </section>
     </main>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
+    // SUPABASE
     const SUPABASE_URL = 'https://pmfhuqhprvusikdxtubv.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_34PJW0hoyZJZqNyifwF-9Q__NTZ2NtZ';
+    const HEADERS = {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json'
+    };
 
+    // PROTEÇÃO ADMIN
     if (localStorage.getItem('userType') !== 'admin') {
       window.location.href = 'index.html';
     }
 
-    async function loadAdmin() {
-      const [clientes, servicos, orcamentos] = await Promise.all([
-        fetchData('clientes', 'deleted_at=isnull'),
-        fetchData('servicos', 'deleted_at=isnull'),
-        fetchData('orcamentos', 'deleted_at=isnull')
-      ]);
+    // 🔧 NAVEGAÇÃO CORRIGIDA
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.nav-link[data-section]').forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          // Remove active de todos
+          document.querySelectorAll('.content-section').forEach(section => {
+            section.classList.remove('active');
+          });
+          document.querySelectorAll('.nav-link').forEach(nav => {
+            nav.classList.remove('active');
+          });
+          
+          // Ativa atual
+          this.classList.add('active');
+          document.getElementById(this.dataset.section).classList.add('active');
+          
+          // Recarrega dados da seção
+          if (this.dataset.section === 'clientes') loadClientes();
+          if (this.dataset.section === 'servicos') loadServicos();
+          if (this.dataset.section === 'orcamentos') loadOrcamentos();
+        });
+      });
+      
+      // Carrega dashboard inicial
+      loadDashboard();
+    });
 
-      renderDashboard(clientes, servicos, orcamentos);
-      renderClientes(clientes);
-      renderServicosAdmin(servicos);
+    // 📊 DASHBOARD
+    async function loadDashboard() {
+      try {
+        const [clientes, servicos, orcamentos] = await Promise.all([
+          fetchData('clientes', 'deleted_at=isnull'),
+          fetchData('servicos', 'deleted_at=isnull'),
+          fetchData('orcamentos', 'status=eq.pendente&deleted_at=isnull')
+        ]);
+
+        const hoje = new Date().toISOString().split('T')[0];
+        document.getElementById('totalClientes').textContent = clientes.length;
+        document.getElementById('hoje').textContent = servicos.filter(s => s.data === hoje).length;
+        document.getElementById('pendentes').textContent = orcamentos.length;
+        document.getElementById('faturamento').textContent = `R$ ${servicos.reduce((sum, s) => sum + parseFloat(s.valor || 0), 0).toFixed(2)}`;
+      } catch(e) {
+        console.error('Erro dashboard:', e);
+      }
     }
 
-    async function fetchData(table, filters = '') {
-      return fetch(`${SUPABASE_URL}/rest/v1/${table}${filters ? `?${filters}` : ''}&order=created_at.desc`, {
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-      }).then(r => r.json());
-    }
-
-    function renderDashboard(clientes, servicos, orcamentos) {
-      const hoje = new Date().toISOString().split('T')[0];
-      document.getElementById('totalClientes').textContent = clientes.length;
-      document.getElementById('hoje').textContent = servicos.filter(s => s.data === hoje).length;
-      document.getElementById('pendentes').textContent = orcamentos.filter(o => o.status === 'pendente').length;
-      document.getElementById('faturamento').textContent = `R$ ${servicos.reduce((sum, s) => sum + (parseFloat(s.valor) || 0), 0).toFixed(2)}`;
-    }
-
-    function renderClientes(clientes) {
-      document.getElementById('clientesTable').innerHTML = clientes.map(c => `
+    // 👥 CLIENTES
+    async function loadClientes() {
+      const clientes = await fetchData('clientes', 'deleted_at=isnull');
+      const tbody = document.getElementById('clientesTable');
+      
+      if (!clientes.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;">Nenhum cliente cadastrado</td></tr>';
+        return;
+      }
+      
+      tbody.innerHTML = clientes.map(c => `
         <tr>
           <td>${c.nome}</td>
           <td>${c.email}</td>
-          <td>${c.telefone}</td>
-          <td>${c.servico}</td>
-          <td>${new Date(c.created_at).toLocaleDateString()}</td>
+          <td>${c.telefone || '---'}</td>
+          <td>${c.servico || '---'}</td>
+          <td>${new Date(c.created_at).toLocaleDateString('pt-BR')}</td>
           <td>
             <a href="mailto:${c.email}" class="btn btn-small btn-primary">📧</a>
             <button class="btn btn-small btn-danger" onclick="deleteItem('clientes', ${c.id})">🗑️</button>
           </td>
         </tr>
-      `).join('') || '<tr><td colspan="6">Nenhum cliente</td></tr>';
+      `).join('');
     }
 
-    function renderServicosAdmin(servicos) {
-      document.getElementById('servicosAdminTable').innerHTML = servicos.map(s => `
+    // 🔧 SERVIÇOS
+    async function loadServicos() {
+      const servicos = await fetchData('servicos', 'deleted_at=isnull');
+      const tbody = document.getElementById('servicosTable');
+      
+      if (!servicos.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;">Nenhum serviço</td></tr>';
+        return;
+      }
+      
+      tbody.innerHTML = servicos.map(s => `
         <tr>
           <td>${s.cliente_email}</td>
           <td>${s.servico}</td>
-          <td>${s.data || '---'}</td>
-          <td><span class="badge badge-${s.status}">${s.status}</span></td>
-          <td>R$ ${(s.valor || 0).toFixed(2)}</td>
+          <td>${s.data ? new Date(s.data).toLocaleDateString('pt-BR') : '---'}</td>
+          <td><span class="badge badge-${getStatusClass(s.status)}">${s.status}</span></td>
+          <td>R$ ${parseFloat(s.valor || 0).toFixed(2)}</td>
+          <td>
+            <select onchange="updateStatus('servicos', ${s.id}, this.value)">
+              <option ${s.status==='pendente'?'selected':''}>pendente</option>
+              <option ${s.status==='ativo'?'selected':''}>ativo</option>
+              <option ${s.status==='concluido'?'selected':''}>concluido</option>
+            </select>
+          </td>
         </tr>
-      `).join('') || '<tr><td colspan="5">Nenhum serviço</td></tr>';
+      `).join('');
+    }
+
+    // 💰 ORÇAMENTOS
+    async function loadOrcamentos() {
+      const orcamentos = await fetchData('orcamentos', 'deleted_at=isnull');
+      const tbody = document.getElementById('orcamentosTable');
+      
+      if (!orcamentos.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;">Nenhum orçamento</td></tr>';
+        return;
+      }
+      
+      tbody.innerHTML = orcamentos.map(o => `
+        <tr>
+          <td>${o.cliente_email}</td>
+          <td>${o.servico}</td>
+          <td>R$ ${parseFloat(o.valor_proposto || 0).toFixed(2)}</td>
+          <td><span class="badge badge-${getStatusClass(o.status)}">${o.status}</span></td>
+          <td>${new Date(o.created_at).toLocaleDateString('pt-BR')}</td>
+          <td>
+            <button class="btn btn-small btn-success" onclick="aceitarOrcamento(${o.id})">✅ Aceitar</button>
+            <button class="btn btn-small btn-danger" onclick="deleteItem('orcamentos', ${o.id})">🗑️</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // API HELPER
+    async function fetchData(table, filters = '') {
+      const url = `${SUPABASE_URL}/rest/v1/${table}${filters ? `?${filters}` : ''}&order=created_at.desc`;
+      const response = await fetch(url, { headers: HEADERS });
+      return response.json();
+    }
+
+    // UTILITÁRIOS
+    function getStatusClass(status) {
+      const classes = { pendente: 'warning', ativo: 'success', concluido: 'success', cancelado: 'danger' };
+      return classes[status] || 'muted';
+    }
+
+    async function deleteItem(table, id) {
+      if (confirm('Excluir permanentemente?')) {
+        await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
+          method: 'PATCH',
+          headers: HEADERS,
+          body: JSON.stringify({ deleted_at: new Date().toISOString() })
+        });
+        loadDashboard();
+      }
+    }
+
+    async function updateStatus(table, id, status) {
+      await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: HEADERS,
+        body: JSON.stringify({ status })
+      });
+      loadDashboard();
+    }
+
+    async function aceitarOrcamento(id) {
+      await fetch(`${SUPABASE_URL}/rest/v1/orcamentos?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: HEADERS,
+        body: JSON.stringify({ status: 'aceito' })
+      });
+      loadOrcamentos();
+      loadDashboard();
     }
 
     async function gerarPDF(periodo) {
@@ -165,16 +346,16 @@
       const doc = new jsPDF();
       
       doc.setFontSize(20);
-      doc.text(`Relatório ${periodo.toUpperCase()}`, 20, 20);
+      doc.text(`Relatório ${periodo.toUpperCase()} - Thiago Pires`, 20, 20);
       doc.setFontSize(12);
       doc.text(`Gerado: ${new Date().toLocaleString('pt-BR')}`, 20, 35);
       
       const clientes = await fetchData('clientes');
-      doc.text(`Total Clientes: ${clientes.length}`, 20, 50);
-      
       const servicos = await fetchData('servicos');
+      
+      doc.text(`Total Clientes: ${clientes.length}`, 20, 50);
       doc.text(`Total Serviços: ${servicos.length}`, 20, 65);
-      doc.text(`Faturamento: R$ ${servicos.reduce((sum, s) => sum + (parseFloat(s.valor) || 0), 0).toFixed(2)}`, 20, 80);
+      doc.text(`Faturamento: R$ ${servicos.reduce((sum, s) => sum + parseFloat(s.valor || 0), 0).toFixed(2)}`, 20, 80);
       
       doc.save(`relatorio-${periodo}-${new Date().toISOString().slice(0,10)}.pdf`);
     }
@@ -183,50 +364,21 @@
       const clientes = await fetchData('clientes');
       const csv = 'Nome,Email,Telefone,Serviço,Data
 ' + 
-        clientes.map(c => `"${c.nome}","${c.email}","${c.telefone}","${c.servico}","${c.created_at}"`).join('
+        clientes.map(c => `"${c.nome}","${c.email}","${c.telefone}","${c.servico}","${new Date(c.created_at).toLocaleDateString('pt-BR')}"`).join('
 ');
       
-      const blob = new Blob([csv], { type: 'text/csv' });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'clientes.csv';
+      a.download = `clientes-${new Date().toISOString().slice(0,10)}.csv`;
       a.click();
-    }
-
-    async function deleteItem(table, id) {
-      if (confirm('Excluir permanentemente?')) {
-        await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
-          method: 'PATCH',
-          headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ deleted_at: new Date().toISOString() })
-        });
-        loadAdmin();
-      }
     }
 
     function logout() {
       localStorage.clear();
       window.location.href = 'index.html';
     }
-
-    // NAVEGAÇÃO
-    document.querySelectorAll('.nav-link[data-section]').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-        document.getElementById(link.dataset.section).classList.add('active');
-        link.classList.add('active');
-      });
-    });
-
-    // INICIAR
-    loadAdmin();
   </script>
 </body>
 </html>
