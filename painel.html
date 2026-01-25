@@ -1,443 +1,232 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel Admin - Thiago Pires</title>
+  <title>Admin - Thiago Pires</title>
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-  <div class="layout">
-    <!-- SIDEBAR -->
+  <div class="app-container">
     <aside class="sidebar">
       <div class="sidebar-header">
-        <div class="brand">Thiago Pires</div>
-        <small>Admin</small>
+        <div class="icon-bolt">⚡</div>
+        <h2>ADMIN</h2>
       </div>
-      
       <nav class="sidebar-nav">
-        <button class="nav-item active" data-section="dashboard">
-          <span>📊</span> Dashboard
-        </button>
-        <button class="nav-item" data-section="clientes">
-          <span>👥</span> Clientes
-        </button>
-        <button class="nav-item" data-section="orcamentos">
-          <span>💰</span> Orçamentos
-        </button>
-        <button class="nav-item" data-section="servicos">
-          <span>🔧</span> Serviços
-        </button>
-        <button class="nav-item" data-section="config">
-          <span>⚙️</span> Configurações
-        </button>
+        <a href="#" class="nav-link active" data-section="dashboard">📊 Dashboard</a>
+        <a href="#" class="nav-link" data-section="clientes">👥 Clientes</a>
+        <a href="#" class="nav-link" data-section="servicos">🔧 Serviços</a>
+        <a href="#" class="nav-link" data-section="orcamentos">💰 Orçamentos</a>
+        <a href="#" class="nav-link" data-section="relatorios">📈 Relatórios</a>
+        <a href="#" class="nav-link danger" onclick="logout()">🚪 Sair</a>
       </nav>
-      
-      <div class="mt-2">
-        <button class="nav-item" onclick="logout()">
-          <span>🚪</span> Sair
-        </button>
-      </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
-    <main class="main">
+    <main class="main-content">
       <header class="main-header">
-        <h1 id="pageTitle">Painel Administrativo</h1>
+        <h1>Painel Admin</h1>
         <div class="user-info">
-          <span>Admin</span>
+          <span>ADMIN</span>
+          <button onclick="logout()" class="btn-logout">Sair</button>
         </div>
       </header>
 
       <!-- DASHBOARD -->
-      <section id="dashboard" class="section visible">
+      <section id="dashboard" class="content-section active">
         <div class="grid-cards">
           <div class="card">
-            <div class="card-list-item">
-              <div class="card-list-item-header">
-                <h3>Total Clientes</h3>
-                <div class="badge badge-success">247</div>
-              </div>
-              <p class="text-muted">+12 este mês</p>
-            </div>
+            <h3>Total Clientes</h3>
+            <div class="badge badge-primary" id="totalClientes">0</div>
           </div>
           <div class="card">
-            <div class="card-list-item">
-              <div class="card-list-item-header">
-                <h3>Orçamentos</h3>
-                <div class="badge badge-success">89</div>
-              </div>
-              <p class="text-muted">R$ 45.230 faturados</p>
-            </div>
+            <h3>Serviços Hoje</h3>
+            <div class="badge badge-success" id="hoje">0</div>
           </div>
           <div class="card">
-            <div class="card-list-item">
-              <div class="card-list-item-header">
-                <h3>Serviços Agendados</h3>
-                <div class="badge badge-muted">23</div>
-              </div>
-              <p class="text-muted">Próximos 7 dias</p>
-            </div>
+            <h3>Orçamentos Pendentes</h3>
+            <div class="badge badge-warning" id="pendentes">0</div>
           </div>
           <div class="card">
-            <div class="card-list-item">
-              <div class="card-list-item-header">
-                <h3>Conversão</h3>
-                <div class="badge badge-success">78%</div>
-              </div>
-              <p class="text-muted">Orçamentos aprovados</p>
-            </div>
+            <h3>Faturamento Mês</h3>
+            <div class="badge badge-danger" id="faturamento">R$ 0</div>
           </div>
         </div>
       </section>
 
       <!-- CLIENTES -->
-      <section id="clientes" class="section">
-        <div class="card">
-          <div class="section-header">
-            <h2>Lista de Clientes</h2>
-            <button class="btn btn-primary" onclick="openModal('clienteModal')">+ Novo Cliente</button>
-          </div>
-          <div class="table-responsive">
-            <table class="table table-mobile">
-              <thead>
-                <tr>
-                  <th><span>Nome</span></th>
-                  <th><span>Email</span></th>
-                  <th><span>Telefone</span></th>
-                  <th><span>Último Serviço</span></th>
-                  <th><span>Status</span></th>
-                  <th><span>Ações</span></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td data-label="Nome">João Silva</td>
-                  <td data-label="Email">joao@email.com</td>
-                  <td data-label="Telefone">(11) 99999-9999</td>
-                  <td data-label="Último Serviço">15/12/2025</td>
-                  <td data-label="Status"><span class="badge badge-success">Ativo</span></td>
-                  <td data-label="Ações">
-                    <button class="btn-small btn-blue">Editar</button>
-                    <button class="btn-small btn-danger">Excluir</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td data-label="Nome">Maria Santos</td>
-                  <td data-label="Email">maria@email.com</td>
-                  <td data-label="Telefone">(11) 88888-8888</td>
-                  <td data-label="Último Serviço">20/12/2025</td>
-                  <td data-label="Status"><span class="badge badge-success">Ativo</span></td>
-                  <td data-label="Ações">
-                    <button class="btn-small btn-blue">Editar</button>
-                    <button class="btn-small btn-danger">Excluir</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+      <section id="clientes" class="content-section">
+        <div class="table-header">
+          <h2>Todos Clientes</h2>
         </div>
-      </section>
-
-      <!-- ORÇAMENTOS -->
-      <section id="orcamentos" class="section">
-        <div class="card">
-          <div class="section-header">
-            <h2>Orçamentos</h2>
-            <button class="btn btn-primary" onclick="openModal('orcamentoModal')">+ Novo Orçamento</button>
-          </div>
-          <div class="table-responsive">
-            <table class="table table-mobile">
-              <thead>
-                <tr>
-                  <th>Cliente</th>
-                  <th>Valor</th>
-                  <th>Data</th>
-                  <th>Status</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td data-label="Cliente">João Silva</td>
-                  <td data-label="Valor">R$ 2.500</td>
-                  <td data-label="Data">25/12/2025</td>
-                  <td data-label="Status"><span class="badge badge-success">Aprovado</span></td>
-                  <td data-label="Ações">
-                    <button class="btn-small btn-blue">Editar</button>
-                    <button class="btn-small btn-danger">Excluir</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td data-label="Cliente">Maria Santos</td>
-                  <td data-label="Valor">R$ 1.800</td>
-                  <td data-label="Data">28/12/2025</td>
-                  <td data-label="Status"><span class="badge badge-muted">Pendente</span></td>
-                  <td data-label="Ações">
-                    <button class="btn-small btn-blue">Editar</button>
-                    <button class="btn-small btn-danger">Excluir</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr><th>Nome</th><th>Email</th><th>Telefone</th><th>Serviço</th><th>Data</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="clientesTable"></tbody>
+          </table>
         </div>
       </section>
 
       <!-- SERVIÇOS -->
-      <section id="servicos" class="section">
-        <div class="card">
-          <div class="section-header">
-            <h2>Serviços Agendados</h2>
-            <button class="btn btn-primary" onclick="openModal('servicoModal')">+ Novo Serviço</button>
-          </div>
-          <div class="table-responsive">
-            <table class="table table-mobile">
-              <thead>
-                <tr>
-                  <th>Cliente</th>
-                  <th>Serviço</th>
-                  <th>Data</th>
-                  <th>Horário</th>
-                  <th>Status</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td data-label="Cliente">João Silva</td>
-                  <td data-label="Serviço">Instalação Elétrica</td>
-                  <td data-label="Data">30/12/2025</td>
-                  <td data-label="Horário">14:00</td>
-                  <td data-label="Status"><span class="badge badge-success">Confirmado</span></td>
-                  <td data-label="Ações">
-                    <button class="btn-small btn-blue">Editar</button>
-                    <button class="btn-small btn-danger">Cancelar</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td data-label="Cliente">Maria Santos</td>
-                  <td data-label="Serviço">Manutenção</td>
-                  <td data-label="Data">02/01/2026</td>
-                  <td data-label="Horário">09:00</td>
-                  <td data-label="Status"><span class="badge badge-muted">Agendado</span></td>
-                  <td data-label="Ações">
-                    <button class="btn-small btn-blue">Editar</button>
-                    <button class="btn-small btn-danger">Cancelar</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+      <section id="servicos" class="content-section">
+        <div class="table-header">
+          <h2>Todos Serviços</h2>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr><th>Cliente</th><th>Serviço</th><th>Data</th><th>Status</th><th>Valor</th></tr>
+            </thead>
+            <tbody id="servicosAdminTable"></tbody>
+          </table>
         </div>
       </section>
 
-      <!-- CONFIGURAÇÕES - COMPLETA -->
-      <section id="config" class="section">
-        <div class="card">
-          <div class="section-header">
-            <h2>Configurações</h2>
-          </div>
-          
-          <!-- ADMIN LOGIN -->
-          <div class="config-section">
-            <h3>🔐 Credenciais Admin</h3>
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Email Admin</label>
-                <input type="email" value="admin@thiagopires.com">
-              </div>
-              <div class="form-group">
-                <label>Senha Admin</label>
-                <input type="password" value="••••••••">
-              </div>
-            </div>
-            <button class="btn btn-primary" onclick="updateAdmin()">Atualizar Credenciais</button>
-          </div>
-
-          <!-- EMPRESA -->
-          <div class="config-section">
-            <h3>🏢 Dados da Empresa</h3>
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Nome</label>
-                <input type="text" value="Thiago Pires - Eletricista">
-              </div>
-              <div class="form-group">
-                <label>Telefone</label>
-                <input type="tel" value="(11) 99999-9999">
-              </div>
-              <div class="form-group">
-                <label>Email</label>
-                <input type="email" value="contato@thiagopires.com">
-              </div>
-            </div>
-            <button class="btn btn-primary">Salvar Empresa</button>
-          </div>
-
-          <!-- RELATÓRIOS -->
-          <div class="config-section">
-            <h3>📊 Relatórios</h3>
-            <div class="form-grid">
-              <div class="form-group">
-                <button class="btn btn-primary full" onclick="generateReport('semanal')">Relatório Semanal</button>
-              </div>
-              <div class="form-group">
-                <button class="btn btn-primary full" onclick="generateReport('mensal')">Relatório Mensal</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- DASHBOARD -->
-          <div class="config-section">
-            <h3>📈 Configurar Dashboard</h3>
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Meta Mensal (R$)</label>
-                <input type="number" value="50000">
-              </div>
-              <div class="form-group">
-                <label>Meta Clientes</label>
-                <input type="number" value="300">
-              </div>
-            </div>
-            <button class="btn btn-primary">Atualizar Dashboard</button>
-          </div>
+      <!-- RELATÓRIOS -->
+      <section id="relatorios" class="content-section">
+        <div class="config-section">
+          <h3>📊 Relatórios</h3>
+          <button class="btn btn-primary" onclick="gerarPDF('semanal')">📋 Semanal PDF</button>
+          <button class="btn btn-primary" onclick="gerarPDF('mensal')">📅 Mensal PDF</button>
+          <button class="btn btn-success" onclick="exportCSV()">📊 Export CSV</button>
         </div>
+        <div id="relatorioPreview"></div>
       </section>
     </main>
   </div>
 
-  <!-- MODALS -->
-  <div id="clienteModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>👥 Novo Cliente</h3>
-        <button class="modal-close" onclick="closeModal('clienteModal')">&times;</button>
-      </div>
-      <form id="clienteForm">
-        <div class="form-group">
-          <label>Nome Completo *</label>
-          <input type="text" name="nome" required>
-        </div>
-        <div class="form-group">
-          <label>Email *</label>
-          <input type="email" name="email" required>
-        </div>
-        <div class="form-group">
-          <label>Telefone *</label>
-          <input type="tel" name="telefone" required>
-        </div>
-        <div class="form-actions">
-          <button type="button" class="btn" onclick="closeModal('clienteModal')">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Salvar Cliente</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div id="orcamentoModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>💰 Novo Orçamento</h3>
-        <button class="modal-close" onclick="closeModal('orcamentoModal')">&times;</button>
-      </div>
-      <form id="orcamentoForm">
-        <div class="form-group">
-          <label>Cliente *</label>
-          <select name="cliente" required>
-            <option value="">Selecione</option>
-            <option value="joao">João Silva</option>
-            <option value="maria">Maria Santos</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Valor (R$) *</label>
-          <input type="number" name="valor" step="0.01" required>
-        </div>
-        <div class="form-actions">
-          <button type="button" class="btn" onclick="closeModal('orcamentoModal')">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Gerar Orçamento</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div id="servicoModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>🔧 Novo Serviço</h3>
-        <button class="modal-close" onclick="closeModal('servicoModal')">&times;</button>
-      </div>
-      <form id="servicoForm">
-        <div class="form-group">
-          <label>Cliente *</label>
-          <select name="cliente" required>
-            <option value="">Selecione</option>
-            <option value="joao">João Silva</option>
-            <option value="maria">Maria Santos</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Tipo de Serviço *</label>
-          <select name="tipo" required>
-            <option value="">Selecione</option>
-            <option value="instalacao">Instalação Elétrica</option>
-            <option value="manutencao">Manutenção</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Data *</label>
-          <input type="date" name="data" required>
-        </div>
-        <div class="form-actions">
-          <button type="button" class="btn" onclick="closeModal('servicoModal')">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Agendar Serviço</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      if (!localStorage.getItem('adminLoggedIn')) window.location.href = 'index.html';
+    const SUPABASE_URL = 'https://pmfhuqhprvusikdxtubv.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_34PJW0hoyZJZqNyifwF-9Q__NTZ2NtZ';
 
-      // Navegação
-      document.querySelectorAll('.nav-item[data-section]').forEach(item => {
-        item.addEventListener('click', function() {
-          document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-          document.querySelectorAll('.section').forEach(section => section.classList.remove('visible'));
-          this.classList.add('active');
-          document.getElementById(this.dataset.section).classList.add('visible');
-          document.getElementById('pageTitle').textContent = {
-            'dashboard': 'Dashboard', 
-            'clientes': 'Clientes', 
-            'orcamentos': 'Orçamentos', 
-            'servicos': 'Serviços', 
-            'config': 'Configurações'
-          }[this.dataset.section] || 'Painel';
+    if (localStorage.getItem('userType') !== 'admin') {
+      window.location.href = 'index.html';
+    }
+
+    async function loadAdmin() {
+      const [clientes, servicos, orcamentos] = await Promise.all([
+        fetchData('clientes', 'deleted_at=isnull'),
+        fetchData('servicos', 'deleted_at=isnull'),
+        fetchData('orcamentos', 'deleted_at=isnull')
+      ]);
+
+      renderDashboard(clientes, servicos, orcamentos);
+      renderClientes(clientes);
+      renderServicosAdmin(servicos);
+    }
+
+    async function fetchData(table, filters = '') {
+      return fetch(`${SUPABASE_URL}/rest/v1/${table}${filters ? `?${filters}` : ''}&order=created_at.desc`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+      }).then(r => r.json());
+    }
+
+    function renderDashboard(clientes, servicos, orcamentos) {
+      const hoje = new Date().toISOString().split('T')[0];
+      document.getElementById('totalClientes').textContent = clientes.length;
+      document.getElementById('hoje').textContent = servicos.filter(s => s.data === hoje).length;
+      document.getElementById('pendentes').textContent = orcamentos.filter(o => o.status === 'pendente').length;
+      document.getElementById('faturamento').textContent = `R$ ${servicos.reduce((sum, s) => sum + (parseFloat(s.valor) || 0), 0).toFixed(2)}`;
+    }
+
+    function renderClientes(clientes) {
+      document.getElementById('clientesTable').innerHTML = clientes.map(c => `
+        <tr>
+          <td>${c.nome}</td>
+          <td>${c.email}</td>
+          <td>${c.telefone}</td>
+          <td>${c.servico}</td>
+          <td>${new Date(c.created_at).toLocaleDateString()}</td>
+          <td>
+            <a href="mailto:${c.email}" class="btn btn-small btn-primary">📧</a>
+            <button class="btn btn-small btn-danger" onclick="deleteItem('clientes', ${c.id})">🗑️</button>
+          </td>
+        </tr>
+      `).join('') || '<tr><td colspan="6">Nenhum cliente</td></tr>';
+    }
+
+    function renderServicosAdmin(servicos) {
+      document.getElementById('servicosAdminTable').innerHTML = servicos.map(s => `
+        <tr>
+          <td>${s.cliente_email}</td>
+          <td>${s.servico}</td>
+          <td>${s.data || '---'}</td>
+          <td><span class="badge badge-${s.status}">${s.status}</span></td>
+          <td>R$ ${(s.valor || 0).toFixed(2)}</td>
+        </tr>
+      `).join('') || '<tr><td colspan="5">Nenhum serviço</td></tr>';
+    }
+
+    async function gerarPDF(periodo) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+      doc.setFontSize(20);
+      doc.text(`Relatório ${periodo.toUpperCase()}`, 20, 20);
+      doc.setFontSize(12);
+      doc.text(`Gerado: ${new Date().toLocaleString('pt-BR')}`, 20, 35);
+      
+      const clientes = await fetchData('clientes');
+      doc.text(`Total Clientes: ${clientes.length}`, 20, 50);
+      
+      const servicos = await fetchData('servicos');
+      doc.text(`Total Serviços: ${servicos.length}`, 20, 65);
+      doc.text(`Faturamento: R$ ${servicos.reduce((sum, s) => sum + (parseFloat(s.valor) || 0), 0).toFixed(2)}`, 20, 80);
+      
+      doc.save(`relatorio-${periodo}-${new Date().toISOString().slice(0,10)}.pdf`);
+    }
+
+    async function exportCSV() {
+      const clientes = await fetchData('clientes');
+      const csv = 'Nome,Email,Telefone,Serviço,Data
+' + 
+        clientes.map(c => `"${c.nome}","${c.email}","${c.telefone}","${c.servico}","${c.created_at}"`).join('
+');
+      
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'clientes.csv';
+      a.click();
+    }
+
+    async function deleteItem(table, id) {
+      if (confirm('Excluir permanentemente?')) {
+        await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
+          method: 'PATCH',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ deleted_at: new Date().toISOString() })
         });
-      });
+        loadAdmin();
+      }
+    }
 
-      // Forms modals
-      document.querySelectorAll('form').forEach(form => {
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
-          alert('✅ ' + this.id.replace('Form', '') + ' salvo!');
-          closeAllModals();
-        });
-      });
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'index.html';
+    }
 
-      window.logout = () => confirm('Sair?') && (localStorage.removeItem('adminLoggedIn'), location.href='index.html');
-      window.updateAdmin = () => alert('✅ Credenciais atualizadas!');
-      window.generateReport = type => alert(`✅ Relatório ${type} gerado!`);
+    // NAVEGAÇÃO
+    document.querySelectorAll('.nav-link[data-section]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        document.getElementById(link.dataset.section).classList.add('active');
+        link.classList.add('active');
+      });
     });
 
-    function openModal(id) { document.getElementById(id).classList.add('active'); }
-    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-    function closeAllModals() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); }
-    document.addEventListener('click', e => e.target.classList.contains('modal') && closeAllModals());
+    // INICIAR
+    loadAdmin();
   </script>
 </body>
 </html>
