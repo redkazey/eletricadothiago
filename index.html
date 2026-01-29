@@ -131,60 +131,44 @@
     </main>
 
     <script>
-        // CONFIGURAÇÕES
+        // ✅ CONFIGURAÇÕES ATUALIZADAS
         const GITHUB = {
-            token: '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',
+            token: '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',  // NOVO TOKEN
             repo: 'redkazey/eletricadothiago',
             path: 'database.json',
             adm: { 
                 email: 'admin@thiago22', 
                 hash: '$2a$10$N9qo8uLOickgx2ZMRZoMy.v0JpGgB2.y3B3E/L2Zq7m6.k6p6M6mC' 
-            } // senha: thiago22
+            }
         };
 
-        let db = { 
-            clientes: [], 
-            agendamentos: [], 
-            materiais: [], 
-            config: { modoFerias: false } 
-        };
+        const WHATSAPP_PHONE = '5521987409682';  // +55 21 98740-9682
+
+        let db = { clientes: [], agendamentos: [], materiais: [], config: { modoFerias: false } };
         let currentUser = null;
         let dbLoaded = false;
 
-        // INICIALIZAÇÃO - CARREGA BANCO PRIMEIRO
         async function load() {
-            console.log('🔄 Carregando banco de dados...');
+            console.log('🔄 Carregando banco...');
             try {
                 const url = `https://api.github.com/repos/${GITHUB.repo}/contents/${GITHUB.path}`;
-                console.log('📡 URL:', url);
-                
                 const r = await fetch(url, {
                     headers: { 
                         'Authorization': `token ${GITHUB.token}`, 
-                        'Cache-Control': 'no-cache',
                         'User-Agent': 'thiago-pires-site'
                     }
                 });
                 
-                if (!r.ok) {
-                    console.error('❌ GitHub API Error:', r.status, r.statusText);
-                    dbLoaded = true;
-                    renderAll();
-                    return;
-                }
-                
-                const d = await r.json();
-                console.log('📦 Dados recebidos:', d);
-                
-                if (d.content) {
+                if (r.ok) {
+                    const d = await r.json();
                     db = JSON.parse(atob(d.content));
                     db.sha = d.sha;
-                    console.log('✅ Banco carregado:', db);
                     dbLoaded = true;
+                    console.log('✅ Banco carregado');
                     renderAll();
                 }
             } catch(e) {
-                console.error('💥 Erro ao carregar banco:', e);
+                console.error('GitHub falhou, modo local:', e);
                 dbLoaded = true;
                 renderAll();
             }
@@ -201,122 +185,86 @@
                         'Content-Type': 'application/json',
                         'User-Agent': 'thiago-pires-site'
                     },
-                    body: JSON.stringify({ 
-                        message: "Update DB", 
-                        content, 
-                        sha: db.sha 
-                    })
+                    body: JSON.stringify({ message: "Update DB", content, sha: db.sha })
                 });
-                if (res.ok) {
-                    console.log('💾 Banco sincronizado');
-                    load();
-                }
+                if (res.ok) load();
             } catch(e) {
-                console.error('💥 Erro ao sincronizar:', e);
+                console.error('Sync falhou:', e);
             }
         }
 
-        // LOGIN COM DEBUG COMPLETO
         async function realizarLogin() {
             const email = document.getElementById('login-email').value.trim();
             const senha = document.getElementById('login-pass').value;
             
-            console.log('🔐 Tentativa de login:', { email, senha: '***' });
-            console.log('📊 Banco carregado?', dbLoaded);
-            console.log('👥 Clientes no banco:', db.clientes.length);
+            console.log('🔐 Login:', email);
 
-            if (!email || !senha) {
-                alert("Preencha e-mail e senha!");
+            // ADMIN - funciona offline
+            if (email === GITHUB.adm.email && bcrypt.compareSync(senha, GITHUB.adm.hash)) {
+                console.log('🎉 ADMIN OK');
+                showSec('sec-adm');
+                document.getElementById('btn-logout').classList.remove('hide');
                 return;
             }
 
-            // ADMIN - SEMPRE FUNCIONA (independente do banco)
-            console.log('🛡️ Verificando ADMIN...');
-            if (email === GITHUB.adm.email) {
-                console.log('🔍 bcrypt.compareSync("thiago22", admin_hash)');
-                const isAdmin = bcrypt.compareSync(senha, GITHUB.adm.hash);
-                console.log('✅ Admin válido?', isAdmin);
-                
-                if (isAdmin) {
-                    console.log('🎉 LOGIN ADMIN SUCESSO!');
-                    showSec('sec-adm');
-                    document.getElementById('btn-logout').classList.remove('hide');
-                    return;
-                }
-            }
-
-            // CLIENTE - só se banco carregou
+            // CLIENTE
             if (!dbLoaded) {
-                alert("Sistema carregando... Aguarde alguns segundos e tente novamente.");
+                alert('Aguarde sistema carregar...');
                 return;
             }
 
-            console.log('👤 Verificando cliente...');
             const cliente = db.clientes.find(c => c.email === email);
-            console.log('🔍 Cliente encontrado:', cliente ? cliente.nome : 'NENHUM');
-
-            if (cliente && cliente.hash) {
-                console.log('🔍 bcrypt.compareSync(senha, cliente.hash)');
-                const isValid = bcrypt.compareSync(senha, cliente.hash);
-                console.log('✅ Cliente válido?', isValid);
-                
-                if (isValid) {
-                    console.log('🎉 LOGIN CLIENTE SUCESSO!');
-                    currentUser = cliente;
-                    document.getElementById('client-name').innerText = cliente.nome.split(' ')[0];
-                    showSec('sec-cliente');
-                    document.getElementById('btn-logout').classList.remove('hide');
-                    initCalendar();
-                    return;
-                }
+            if (cliente && bcrypt.compareSync(senha, cliente.hash)) {
+                console.log('🎉 CLIENTE OK');
+                currentUser = cliente;
+                document.getElementById('client-name').innerText = cliente.nome.split(' ')[0];
+                showSec('sec-cliente');
+                document.getElementById('btn-logout').classList.remove('hide');
+                initCalendar();
+                return;
             }
 
-            console.log('❌ Login falhou');
-            alert("E-mail ou senha incorretos!");
+            alert('Credenciais incorretas!');
         }
 
-        // CADASTRO
+        function agendar() {
+            const data = document.getElementById('data-agendamento').value;
+            if (!data) return alert('Selecione data!');
+            
+            const txt = `Olá Thiago! ${currentUser.nome} (CPF: ${currentUser.cpf}) agendou: ${data}`;
+            window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(txt)}`, '_blank');
+        }
+
         async function salvarNovoCliente() {
             const nome = document.getElementById('cad-nome').value.trim();
             const cpf = document.getElementById('cad-cpf').value.replace(/D/g, '');
             const email = document.getElementById('cad-email').value.trim();
             const pass = document.getElementById('cad-pass').value;
-            const rua = document.getElementById('cad-rua').value;
-            const num = document.getElementById('cad-num').value;
-            const bairro = document.getElementById('cad-bairro').value;
 
-            if (!nome || !cpf || !email || !pass || cpf.length !== 11) {
-                return alert("Preencha todos os campos corretamente! CPF deve ter 11 dígitos.");
+            if (!nome || cpf.length !== 11 || !email || !pass) {
+                return alert('Preencha todos os campos!');
             }
 
             if (db.clientes.find(c => c.email === email || c.cpf === cpf)) {
-                return alert("E-mail ou CPF já cadastrado!");
+                return alert('E-mail/CPF já existe!');
             }
 
-            const hash = bcrypt.hashSync(pass, 10);
-            db.clientes.push({ 
-                nome, cpf, email, hash, rua, num, bairro,
-                dataCad: new Date().toLocaleDateString('pt-BR') 
+            db.clientes.push({
+                nome, cpf, email, 
+                hash: bcrypt.hashSync(pass, 10),
+                dataCad: new Date().toLocaleDateString('pt-BR')
             });
 
             await sync();
-            alert("Cadastro realizado! Faça login agora.");
+            alert('Cadastro OK! Faça login.');
             showSec('sec-login');
             document.querySelectorAll('#sec-cad input').forEach(i => i.value = '');
-        }
-
-        function agendar() {
-            const data = document.getElementById('data-agendamento').value;
-            if (!data) return alert("Selecione uma data!");
-            
-            const txt = `Olá Thiago! Sou ${currentUser.nome} (CPF: ${currentUser.cpf}). Agendei para ${data}.`;
-            window.open(`https://wa.me/5511999999999?text=${encodeURIComponent(txt)}`, '_blank');
         }
 
         async function addItem(tipo) {
             const nome = document.getElementById('adm-mat-nome').value.trim();
             const preco = parseFloat(document.getElementById('adm-mat-preco').value);
-            if (!nome || isNaN(preco) || preco <= 0) return alert("Nome e preço válido!");
+            if (!nome || !preco || preco <= 0) return alert('Dados inválidos!');
 
             db[tipo].push({ id: Date.now(), n: nome, p: preco.toFixed(2) });
             await sync();
@@ -336,21 +284,21 @@
         }
 
         function fCPF(input) {
-            let valor = input.value.replace(/D/g, "");
-            valor = valor.replace(/(d{3})(d)/, "$1.$2");
-            valor = valor.replace(/(d{3})(d)/, "$1.$2");
-            valor = valor.replace(/(d{3})(d{1,2})$/, "$1-$2");
-            input.value = valor;
+            let v = input.value.replace(/D/g, "");
+            v = v.replace(/(d{3})(d)/, "$1.$2");
+            v = v.replace(/(d{3})(d)/, "$1.$2");
+            v = v.replace(/(d{3})(d{1,2})$/, "$1-$2");
+            input.value = v;
         }
 
         async function apiCEP(cep) {
             if (cep.replace(/D/g, '').length !== 8) return;
             try {
                 const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-                const dados = await res.json();
-                if (!dados.erro) {
-                    document.getElementById('cad-rua').value = dados.logradouro;
-                    document.getElementById('cad-bairro').value = dados.bairro;
+                const d = await res.json();
+                if (!d.erro) {
+                    document.getElementById('cad-rua').value = d.logradouro;
+                    document.getElementById('cad-bairro').value = d.bairro;
                 }
             } catch(e) {}
         }
@@ -368,29 +316,19 @@
 
         function renderAll() {
             document.getElementById('lista-materiais').innerHTML = 
-                db.materiais.map(m => `
-                    <div class='flex justify-between items-center p-3 bg-black/40 rounded-lg border border-gray-800'>
-                        <span>${m.n}</span>
-                        <span class='text-green-400 font-bold'>R$ ${m.p}</span>
-                    </div>
-                `).join('') || '<p class="text-gray-500 text-xs">Nenhum material</p>';
-            
+                db.materiais.map(m => `<div class='flex justify-between p-3 bg-black/40 rounded-lg border border-gray-800'><span>${m.n}</span><span class='text-green-400'>R$ ${m.p}</span></div>`).join('') || 
+                '<p class="text-gray-500 text-xs">Sem materiais</p>';
+
             document.getElementById('lista-clientes-adm').innerHTML = 
-                db.clientes.slice(-20).map(c => `
-                    <div class='p-2 bg-black/40 rounded border border-gray-800 mb-1 flex justify-between'>
-                        <span>${c.nome}</span>
-                        <span class='text-gray-500 text-xs'>${c.dataCad}</span>
-                    </div>
-                `).join('') || '<p class="text-gray-500 text-xs">Nenhum cliente</p>';
+                db.clientes.slice(-20).map(c => `<div class='p-2 bg-black/40 rounded border mb-1 flex justify-between'><span>${c.nome}</span><span class='text-xs'>${c.dataCad}</span></div>`).join('') || 
+                '<p class="text-gray-500 text-xs">Sem clientes</p>';
 
             const btn = document.getElementById('btn-ferias');
-            btn.innerText = db.config.modoFerias ? "MODO FÉRIAS ATIVO" : "MODO TRABALHO ATIVO";
-            btn.className = db.config.modoFerias ? 
-                "px-6 py-2 rounded-full text-[10px] font-black uppercase bg-red-600 shadow-lg" : 
-                "px-6 py-2 rounded-full text-[10px] font-black uppercase bg-green-600 shadow-lg";
+            btn.textContent = db.config.modoFerias ? 'MODO FÉRIAS' : 'MODO TRABALHO';
+            btn.className = db.config.modoFerias ? 'px-6 py-2 rounded-full text-[10px] font-black uppercase bg-red-600 shadow-lg' : 'px-6 py-2 rounded-full text-[10px] font-black uppercase bg-green-600 shadow-lg';
         }
 
-        function logout() { 
+        function logout() {
             currentUser = null;
             document.getElementById('btn-logout').classList.add('hide');
             showSec('sec-login');
@@ -398,11 +336,7 @@
             document.getElementById('login-pass').value = '';
         }
 
-        // BOOT - CARREGA ANTES DE TUDO
-        window.addEventListener('load', () => {
-            console.log('🚀 Iniciando aplicação...');
-            load();
-        });
+        window.addEventListener('load', load);
     </script>
 </body>
 </html>
