@@ -131,21 +131,33 @@
     </main>
 
     <script>
-        // CONFIGURAÇÕES VINCULADAS AO SEU REPOSITÓRIO
+        // CONFIGURAÇÕES
         const GITHUB = {
-            token: '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', 
+            token: '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',
             repo: 'redkazey/eletricadothiago',
             path: 'database.json',
-            adm: { email: 'admin@thiago22', hash: '$2a$10$N9qo8uLOickgx2ZMRZoMy.v0JpGgB2.y3B3E/L2Zq7m6.k6p6M6mC' } // senha: thiago22
+            adm: { 
+                email: 'admin@thiago22', 
+                hash: '$2a$10$N9qo8uLOickgx2ZMRZoMy.v0JpGgB2.y3B3E/L2Zq7m6.k6p6M6mC' 
+            } // senha: thiago22
         };
 
-        let db = { clientes: [], agendamentos: [], materiais: [], config: { modoFerias: false } };
+        let db = { 
+            clientes: [], 
+            agendamentos: [], 
+            materiais: [], 
+            config: { modoFerias: false } 
+        };
         let currentUser = null;
+        let dbLoaded = false;
 
-        // INICIALIZAÇÃO
+        // INICIALIZAÇÃO - CARREGA BANCO PRIMEIRO
         async function load() {
+            console.log('🔄 Carregando banco de dados...');
             try {
                 const url = `https://api.github.com/repos/${GITHUB.repo}/contents/${GITHUB.path}`;
+                console.log('📡 URL:', url);
+                
                 const r = await fetch(url, {
                     headers: { 
                         'Authorization': `token ${GITHUB.token}`, 
@@ -153,15 +165,28 @@
                         'User-Agent': 'thiago-pires-site'
                     }
                 });
+                
+                if (!r.ok) {
+                    console.error('❌ GitHub API Error:', r.status, r.statusText);
+                    dbLoaded = true;
+                    renderAll();
+                    return;
+                }
+                
                 const d = await r.json();
+                console.log('📦 Dados recebidos:', d);
+                
                 if (d.content) {
                     db = JSON.parse(atob(d.content));
                     db.sha = d.sha;
+                    console.log('✅ Banco carregado:', db);
+                    dbLoaded = true;
                     renderAll();
                 }
-            } catch(e) { 
-                console.error("Erro ao carregar banco de dados:", e);
-                renderAll(); // Usa db vazio se falhar
+            } catch(e) {
+                console.error('💥 Erro ao carregar banco:', e);
+                dbLoaded = true;
+                renderAll();
             }
         }
 
@@ -182,43 +207,75 @@
                         sha: db.sha 
                     })
                 });
-                if (res.ok) load();
+                if (res.ok) {
+                    console.log('💾 Banco sincronizado');
+                    load();
+                }
             } catch(e) {
-                console.error("Erro ao sincronizar:", e);
+                console.error('💥 Erro ao sincronizar:', e);
             }
         }
 
-        // LOGIN
+        // LOGIN COM DEBUG COMPLETO
         async function realizarLogin() {
             const email = document.getElementById('login-email').value.trim();
             const senha = document.getElementById('login-pass').value;
+            
+            console.log('🔐 Tentativa de login:', { email, senha: '***' });
+            console.log('📊 Banco carregado?', dbLoaded);
+            console.log('👥 Clientes no banco:', db.clientes.length);
 
-            if (!email || !senha) return alert("Preencha e-mail e senha!");
+            if (!email || !senha) {
+                alert("Preencha e-mail e senha!");
+                return;
+            }
 
-            // Verificação ADMIN
+            // ADMIN - SEMPRE FUNCIONA (independente do banco)
+            console.log('🛡️ Verificando ADMIN...');
             if (email === GITHUB.adm.email) {
-                if (bcrypt.compareSync(senha, GITHUB.adm.hash)) {
+                console.log('🔍 bcrypt.compareSync("thiago22", admin_hash)');
+                const isAdmin = bcrypt.compareSync(senha, GITHUB.adm.hash);
+                console.log('✅ Admin válido?', isAdmin);
+                
+                if (isAdmin) {
+                    console.log('🎉 LOGIN ADMIN SUCESSO!');
                     showSec('sec-adm');
                     document.getElementById('btn-logout').classList.remove('hide');
                     return;
                 }
             }
 
-            // Verificação CLIENTE (com hash bcrypt)
-            const cliente = db.clientes.find(c => c.email === email);
-            if (cliente && bcrypt.compareSync(senha, cliente.hash)) {
-                currentUser = cliente;
-                document.getElementById('client-name').innerText = cliente.nome.split(' ')[0];
-                showSec('sec-cliente');
-                document.getElementById('btn-logout').classList.remove('hide');
-                initCalendar();
+            // CLIENTE - só se banco carregou
+            if (!dbLoaded) {
+                alert("Sistema carregando... Aguarde alguns segundos e tente novamente.");
                 return;
             }
 
+            console.log('👤 Verificando cliente...');
+            const cliente = db.clientes.find(c => c.email === email);
+            console.log('🔍 Cliente encontrado:', cliente ? cliente.nome : 'NENHUM');
+
+            if (cliente && cliente.hash) {
+                console.log('🔍 bcrypt.compareSync(senha, cliente.hash)');
+                const isValid = bcrypt.compareSync(senha, cliente.hash);
+                console.log('✅ Cliente válido?', isValid);
+                
+                if (isValid) {
+                    console.log('🎉 LOGIN CLIENTE SUCESSO!');
+                    currentUser = cliente;
+                    document.getElementById('client-name').innerText = cliente.nome.split(' ')[0];
+                    showSec('sec-cliente');
+                    document.getElementById('btn-logout').classList.remove('hide');
+                    initCalendar();
+                    return;
+                }
+            }
+
+            console.log('❌ Login falhou');
             alert("E-mail ou senha incorretos!");
         }
 
-        // CADASTRO CLIENTE
+        // CADASTRO
         async function salvarNovoCliente() {
             const nome = document.getElementById('cad-nome').value.trim();
             const cpf = document.getElementById('cad-cpf').value.replace(/D/g, '');
@@ -238,36 +295,28 @@
 
             const hash = bcrypt.hashSync(pass, 10);
             db.clientes.push({ 
-                nome, 
-                cpf, 
-                email, 
-                hash, 
-                rua, 
-                num, 
-                bairro,
+                nome, cpf, email, hash, rua, num, bairro,
                 dataCad: new Date().toLocaleDateString('pt-BR') 
             });
 
             await sync();
-            alert("Cadastro realizado com sucesso! Faça login agora.");
+            alert("Cadastro realizado! Faça login agora.");
             showSec('sec-login');
-            // Limpa formulário
             document.querySelectorAll('#sec-cad input').forEach(i => i.value = '');
         }
 
         function agendar() {
             const data = document.getElementById('data-agendamento').value;
-            if (!data) return alert("Por favor, selecione uma data no calendário!");
+            if (!data) return alert("Selecione uma data!");
             
-            const txt = `Olá Thiago! Sou o cliente ${currentUser.nome} (CPF: ${currentUser.cpf}). Agendei um serviço pelo site para ${data}. Aguardo confirmação!`;
-            window.open(`https://wa.me/55SEUNUMERO?text=${encodeURIComponent(txt)}`, '_blank');
+            const txt = `Olá Thiago! Sou ${currentUser.nome} (CPF: ${currentUser.cpf}). Agendei para ${data}.`;
+            window.open(`https://wa.me/5511999999999?text=${encodeURIComponent(txt)}`, '_blank');
         }
 
-        // FUNÇÕES ADM
         async function addItem(tipo) {
             const nome = document.getElementById('adm-mat-nome').value.trim();
             const preco = parseFloat(document.getElementById('adm-mat-preco').value);
-            if (!nome || isNaN(preco) || preco <= 0) return alert("Nome e preço válido são obrigatórios!");
+            if (!nome || isNaN(preco) || preco <= 0) return alert("Nome e preço válido!");
 
             db[tipo].push({ id: Date.now(), n: nome, p: preco.toFixed(2) });
             await sync();
@@ -281,7 +330,6 @@
             renderAll();
         }
 
-        // UTILITÁRIOS
         function showSec(id) {
             document.querySelectorAll('section').forEach(s => s.classList.add('hide'));
             document.getElementById(id).classList.remove('hide');
@@ -303,12 +351,8 @@
                 if (!dados.erro) {
                     document.getElementById('cad-rua').value = dados.logradouro;
                     document.getElementById('cad-bairro').value = dados.bairro;
-                } else {
-                    alert("CEP não encontrado!");
                 }
-            } catch(e) {
-                alert("Erro ao consultar CEP!");
-            }
+            } catch(e) {}
         }
 
         function initCalendar() {
@@ -317,48 +361,33 @@
                 dateFormat: "d/m/Y H:i",
                 minDate: "today",
                 locale: "pt",
-                disable: [
-                    function(date) { 
-                        return db.config.modoFerias || date.getDay() === 0 || date.getDay() === 6; 
-                    }
-                ],
-                minTime: "08:00", 
-                maxTime: "18:00",
-                time_24hr: true
+                disable: [date => db.config.modoFerias || date.getDay() === 0 || date.getDay() === 6],
+                minTime: "08:00", maxTime: "18:00", time_24hr: true
             });
         }
 
         function renderAll() {
-            // Render Materiais
             document.getElementById('lista-materiais').innerHTML = 
                 db.materiais.map(m => `
-                    <div class='flex justify-between items-center p-3 bg-black/40 rounded-lg border border-gray-800 hover:bg-gray-800/50'>
-                        <span class='text-sm'>${m.n}</span>
-                        <span class='text-green-400 font-bold text-xs'>R$ ${parseFloat(m.p).toFixed(2)}</span>
+                    <div class='flex justify-between items-center p-3 bg-black/40 rounded-lg border border-gray-800'>
+                        <span>${m.n}</span>
+                        <span class='text-green-400 font-bold'>R$ ${m.p}</span>
                     </div>
-                `).join('') || '<p class="text-gray-500 text-xs italic">Nenhum material cadastrado</p>';
+                `).join('') || '<p class="text-gray-500 text-xs">Nenhum material</p>';
             
-            // Render Clientes (últimos 50)
-            const clientesHTML = db.clientes.slice(-50).map(c => `
-                <div class='p-3 bg-black/40 rounded-lg border border-gray-800 mb-2 flex justify-between items-center hover:bg-gray-800/50'>
-                    <div>
-                        <span class='font-medium block'>${c.nome}</span>
-                        <span class='text-gray-500 text-[10px]'>${c.email}</span>
+            document.getElementById('lista-clientes-adm').innerHTML = 
+                db.clientes.slice(-20).map(c => `
+                    <div class='p-2 bg-black/40 rounded border border-gray-800 mb-1 flex justify-between'>
+                        <span>${c.nome}</span>
+                        <span class='text-gray-500 text-xs'>${c.dataCad}</span>
                     </div>
-                    <span class='text-xs text-gray-400'>${c.dataCad || ''}</span>
-                </div>
-            `).join('');
-            document.getElementById('lista-clientes-adm').innerHTML = clientesHTML || '<p class="text-gray-500 text-xs italic">Nenhum cliente</p>';
-            
-            // Botão Férias
+                `).join('') || '<p class="text-gray-500 text-xs">Nenhum cliente</p>';
+
             const btn = document.getElementById('btn-ferias');
-            if (db.config.modoFerias) {
-                btn.innerText = "MODO FÉRIAS (ATIVO)";
-                btn.className = "px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-wider bg-red-600 text-white shadow-[0_0_15px_rgba(220,38,38,0.5)] hover:scale-105";
-            } else {
-                btn.innerText = "MODO TRABALHO (ATIVO)";
-                btn.className = "px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-wider bg-green-600 text-white shadow-[0_0_15px_rgba(34,197,94,0.5)] hover:scale-105";
-            }
+            btn.innerText = db.config.modoFerias ? "MODO FÉRIAS ATIVO" : "MODO TRABALHO ATIVO";
+            btn.className = db.config.modoFerias ? 
+                "px-6 py-2 rounded-full text-[10px] font-black uppercase bg-red-600 shadow-lg" : 
+                "px-6 py-2 rounded-full text-[10px] font-black uppercase bg-green-600 shadow-lg";
         }
 
         function logout() { 
@@ -369,8 +398,11 @@
             document.getElementById('login-pass').value = '';
         }
 
-        // Inicialização
-        window.addEventListener('load', load);
+        // BOOT - CARREGA ANTES DE TUDO
+        window.addEventListener('load', () => {
+            console.log('🚀 Iniciando aplicação...');
+            load();
+        });
     </script>
 </body>
 </html>
