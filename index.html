@@ -29,7 +29,7 @@
     <nav class="p-5 border-b border-gray-800 glass sticky top-0 z-50 flex justify-between items-center">
         <div>
             <h1 class="font-bold text-xl neon-text tracking-tighter">THIAGO PIRES</h1>
-            <span class="text-[10px] text-gray-500 uppercase">CNPJ: 61.465.616/0001-22</span>
+            <span class="text-[10px] text-gray-500 uppercase">📧 contato@thiago22.com | CNPJ: 61.465.616/0001-22</span>
         </div>
         <div id="nav-actions">
             <button id="btn-logout" onclick="logout()" class="hide text-xs text-red-500 border border-red-900 px-4 py-2 rounded-lg hover:bg-red-900/20">SAIR DO SISTEMA</button>
@@ -77,32 +77,26 @@
             <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <h2 class="text-3xl font-bold">Gestão <span class="neon-text">Thiago Pires</span></h2>
                 <div class="flex gap-2">
-                    <button onclick="toggleF()" id="btn-ferias" class="px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all"></button>
+                    <button onclick="toggleFerias()" id="btn-ferias" class="px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all"></button>
                 </div>
             </header>
-            
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Coluna Materiais -->
                 <div class="bg-[#151520] p-6 rounded-2xl border border-gray-800 neon-border">
                     <h3 class="font-bold mb-4 flex items-center gap-2 text-green-400">📦 MATERIAIS</h3>
                     <div class="space-y-3 mb-6">
                         <input type="text" id="adm-mat-nome" placeholder="Nome do Item" class="w-full p-3 rounded-lg text-xs">
                         <input type="number" id="adm-mat-preco" placeholder="Preço R$" class="w-full p-3 rounded-lg text-xs" step="0.01">
-                        <button onclick="addItem('materiais')" class="w-full bg-white text-black font-bold p-2 rounded-lg text-[10px] uppercase">CADASTRAR ITEM</button>
+                        <button onclick="addMaterial()" class="w-full bg-white text-black font-bold p-2 rounded-lg text-[10px] uppercase">CADASTRAR ITEM</button>
                     </div>
                     <div id="lista-materiais" class="space-y-2 max-h-60 overflow-y-auto pr-2"></div>
                 </div>
-
-                <!-- Coluna Clientes -->
                 <div class="bg-[#151520] p-6 rounded-2xl border border-gray-800 neon-border">
                     <h3 class="font-bold mb-4 text-blue-400">👥 CLIENTES</h3>
                     <div id="lista-clientes-adm" class="space-y-2 text-xs"></div>
                 </div>
-
-                <!-- Coluna Agenda -->
                 <div class="bg-[#151520] p-6 rounded-2xl border border-gray-800 neon-border">
-                    <h3 class="font-bold mb-4 text-purple-400">📅 HISTÓRICO DE AGENDAMENTOS</h3>
-                    <div id="lista-agenda-adm" class="space-y-2 text-[10px]"></div>
+                    <h3 class="font-bold mb-4 text-purple-400">📅 HISTÓRICO</h3>
+                    <div id="lista-agenda-adm" class="space-y-2 text-[10px]">Sem agendamentos</div>
                 </div>
             </div>
         </section>
@@ -113,7 +107,6 @@
                 <h2 class="text-3xl font-bold">Bem-vindo, <span id="client-name" class="neon-text"></span>!</h2>
                 <p class="text-gray-400 mt-2">Escolha abaixo o melhor horário para seu serviço elétrico.</p>
             </div>
-
             <div class="bg-[#151520] p-8 rounded-3xl border border-gray-800 neon-border shadow-2xl">
                 <label class="block text-sm font-bold mb-4 uppercase tracking-widest text-gray-500">Selecione Data e Hora:</label>
                 <input type="text" id="data-agendamento" class="w-full p-5 rounded-2xl mb-6 text-lg font-bold text-center" placeholder="Clique para abrir o calendário">
@@ -131,91 +124,106 @@
     </main>
 
     <script>
-        // ✅ CONFIGURAÇÕES ATUALIZADAS
-        const GITHUB = {
-            token: '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',  // NOVO TOKEN
-            repo: 'redkazey/eletricadothiago',
-            path: 'database.json',
-            adm: { 
-                email: 'admin@thiago22', 
-                hash: '$2a$10$N9qo8uLOickgx2ZMRZoMy.v0JpGgB2.y3B3E/L2Zq7m6.k6p6M6mC' 
-            }
+        // ✅ SEUS DADOS NOTION (100% CONFIGURADO!)
+        const NOTION = {
+            token: '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',
+            db_clientes: '2f72f2c3e7db80cbbcd1f7cf4df3b6cd',
+            db_materiais: '2f72f2c3e7db8059a121fe1140162cf2',
+            db_config: '2f72f2c3e7db80fb80fae6cf9ee811d3'
         };
 
-        const WHATSAPP_PHONE = '5521987409682';  // +55 21 98740-9682
+        const WHATSAPP_PHONE = '5521987409682'; // +55 21 98740-9682
+        const ADMIN = { email: 'admin@thiago22', hash: '$2a$10$N9qo8uLOickgx2ZMRZoMy.v0JpGgB2.y3B3E/L2Zq7m6.k6p6M6mC' };
 
-        let db = { clientes: [], agendamentos: [], materiais: [], config: { modoFerias: false } };
-        let currentUser = null;
-        let dbLoaded = false;
+        let clientes = [], materiais = [], modoFerias = false, currentUser = null;
 
-        async function load() {
-            console.log('🔄 Carregando banco...');
+        // 🔥 NOTION API
+        async function notionQuery(databaseId) {
             try {
-                const url = `https://api.github.com/repos/${GITHUB.repo}/contents/${GITHUB.path}`;
-                const r = await fetch(url, {
-                    headers: { 
-                        'Authorization': `token ${GITHUB.token}`, 
-                        'User-Agent': 'thiago-pires-site'
+                const res = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${NOTION.token}`,
+                        'Content-Type': 'application/json',
+                        'Notion-Version': '2022-06-28'
                     }
                 });
-                
-                if (r.ok) {
-                    const d = await r.json();
-                    db = JSON.parse(atob(d.content));
-                    db.sha = d.sha;
-                    dbLoaded = true;
-                    console.log('✅ Banco carregado');
-                    renderAll();
-                }
+                return await res.json();
             } catch(e) {
-                console.error('GitHub falhou, modo local:', e);
-                dbLoaded = true;
-                renderAll();
+                console.error('Notion query error:', e);
+                return { results: [] };
             }
         }
 
-        async function sync() {
+        async function notionCreate(databaseId, properties) {
             try {
-                const content = btoa(JSON.stringify(db, null, 2));
-                const url = `https://api.github.com/repos/${GITHUB.repo}/contents/${GITHUB.path}`;
-                const res = await fetch(url, {
-                    method: 'PUT',
-                    headers: { 
-                        'Authorization': `token ${GITHUB.token}`, 
+                const res = await fetch(`https://api.notion.com/v1/pages`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${NOTION.token}`,
                         'Content-Type': 'application/json',
-                        'User-Agent': 'thiago-pires-site'
+                        'Notion-Version': '2022-06-28'
                     },
-                    body: JSON.stringify({ message: "Update DB", content, sha: db.sha })
+                    body: JSON.stringify({
+                        parent: { database_id: databaseId },
+                        properties
+                    })
                 });
-                if (res.ok) load();
+                return res.ok;
             } catch(e) {
-                console.error('Sync falhou:', e);
+                console.error('Notion create error:', e);
+                return false;
             }
         }
 
+        // 🚀 LOAD
+        async function load() {
+            console.log('🔄 Carregando Notion...');
+            
+            // Clientes
+            const clientesRes = await notionQuery(NOTION.db_clientes);
+            clientes = clientesRes.results
+                .map(p => ({
+                    id: p.id,
+                    nome: p.properties.Name?.title[0]?.plain_text || '',
+                    email: p.properties.Email?.email || '',
+                    cpf: p.properties.CPF?.rich_text[0]?.plain_text || '',
+                    hash: p.properties.Senha?.rich_text[0]?.plain_text || ''
+                }))
+                .filter(c => c.nome && c.email);
+
+            // Materiais
+            const materiaisRes = await notionQuery(NOTION.db_materiais);
+            materiais = materiaisRes.results
+                .map(p => ({
+                    id: p.id,
+                    n: p.properties.Name?.title[0]?.plain_text || '',
+                    p: p.properties.Preço?.number || 0
+                }))
+                .filter(m => m.n);
+
+            console.log('✅ Notion carregado:', { clientes: clientes.length, materiais: materiais.length });
+            renderAll();
+        }
+
+        // LOGIN
         async function realizarLogin() {
             const email = document.getElementById('login-email').value.trim();
             const senha = document.getElementById('login-pass').value;
-            
-            console.log('🔐 Login:', email);
 
-            // ADMIN - funciona offline
-            if (email === GITHUB.adm.email && bcrypt.compareSync(senha, GITHUB.adm.hash)) {
-                console.log('🎉 ADMIN OK');
+            // ADMIN (funciona offline)
+            if (email === ADMIN.email && bcrypt.compareSync(senha, ADMIN.hash)) {
+                console.log('🎉 ADMIN LOGIN');
                 showSec('sec-adm');
                 document.getElementById('btn-logout').classList.remove('hide');
+                load(); // Carrega painéis
                 return;
             }
 
             // CLIENTE
-            if (!dbLoaded) {
-                alert('Aguarde sistema carregar...');
-                return;
-            }
-
-            const cliente = db.clientes.find(c => c.email === email);
+            const cliente = clientes.find(c => c.email === email);
             if (cliente && bcrypt.compareSync(senha, cliente.hash)) {
-                console.log('🎉 CLIENTE OK');
+                console.log('🎉 CLIENTE LOGIN');
                 currentUser = cliente;
                 document.getElementById('client-name').innerText = cliente.nome.split(' ')[0];
                 showSec('sec-cliente');
@@ -224,17 +232,10 @@
                 return;
             }
 
-            alert('Credenciais incorretas!');
+            alert('E-mail ou senha incorretos!');
         }
 
-        function agendar() {
-            const data = document.getElementById('data-agendamento').value;
-            if (!data) return alert('Selecione data!');
-            
-            const txt = `Olá Thiago! ${currentUser.nome} (CPF: ${currentUser.cpf}) agendou: ${data}`;
-            window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(txt)}`, '_blank');
-        }
-
+        // CADASTRO
         async function salvarNovoCliente() {
             const nome = document.getElementById('cad-nome').value.trim();
             const cpf = document.getElementById('cad-cpf').value.replace(/D/g, '');
@@ -242,40 +243,94 @@
             const pass = document.getElementById('cad-pass').value;
 
             if (!nome || cpf.length !== 11 || !email || !pass) {
-                return alert('Preencha todos os campos!');
+                return alert('Preencha todos os campos corretamente!');
             }
 
-            if (db.clientes.find(c => c.email === email || c.cpf === cpf)) {
-                return alert('E-mail/CPF já existe!');
+            if (clientes.find(c => c.email === email || c.cpf === cpf)) {
+                return alert('E-mail ou CPF já cadastrado!');
             }
 
-            db.clientes.push({
-                nome, cpf, email, 
-                hash: bcrypt.hashSync(pass, 10),
-                dataCad: new Date().toLocaleDateString('pt-BR')
+            const hash = bcrypt.hashSync(pass, 10);
+            const ok = await notionCreate(NOTION.db_clientes, {
+                Name: { title: [{ text: { content: nome } }] },
+                Email: { email },
+                CPF: { rich_text: [{ text: { content: cpf } }] },
+                Senha: { rich_text: [{ text: { content: hash } }] }
             });
 
-            await sync();
-            alert('Cadastro OK! Faça login.');
-            showSec('sec-login');
-            document.querySelectorAll('#sec-cad input').forEach(i => i.value = '');
+            if (ok) {
+                alert('✅ Cadastro realizado! Faça login.');
+                showSec('sec-login');
+                document.querySelectorAll('#sec-cad input').forEach(i => i.value = '');
+                load();
+            } else {
+                alert('❌ Erro no cadastro. Tente novamente.');
+            }
         }
 
-        async function addItem(tipo) {
+        // MATERIAIS
+        async function addMaterial() {
             const nome = document.getElementById('adm-mat-nome').value.trim();
             const preco = parseFloat(document.getElementById('adm-mat-preco').value);
-            if (!nome || !preco || preco <= 0) return alert('Dados inválidos!');
+            
+            if (!nome || !preco || preco <= 0) {
+                return alert('Nome e preço válidos obrigatórios!');
+            }
 
-            db[tipo].push({ id: Date.now(), n: nome, p: preco.toFixed(2) });
-            await sync();
-            document.getElementById('adm-mat-nome').value = '';
-            document.getElementById('adm-mat-preco').value = '';
+            const ok = await notionCreate(NOTION.db_materiais, {
+                Name: { title: [{ text: { content: nome } }] },
+                Preço: { number: preco }
+            });
+
+            if (ok) {
+                document.getElementById('adm-mat-nome').value = '';
+                document.getElementById('adm-mat-preco').value = '';
+                load();
+            }
         }
 
-        async function toggleF() {
-            db.config.modoFerias = !db.config.modoFerias;
-            await sync();
+        function renderAll() {
+            // Materiais
+            document.getElementById('lista-materiais').innerHTML = 
+                materiais.map(m => `
+                    <div class='flex justify-between items-center p-3 bg-black/40 rounded-lg border border-gray-800 hover:bg-gray-800/50'>
+                        <span class='text-sm'>${m.n}</span>
+                        <span class='text-green-400 font-bold text-xs'>R$ ${m.p.toFixed(2)}</span>
+                    </div>
+                `).join('') || '<p class="text-gray-500 text-xs italic">Nenhum material cadastrado</p>';
+
+            // Clientes
+            document.getElementById('lista-clientes-adm').innerHTML = 
+                clientes.slice(-10).map(c => `
+                    <div class='p-3 bg-black/40 rounded-lg border border-gray-800 mb-2 flex justify-between items-center hover:bg-gray-800/50'>
+                        <div>
+                            <span class='font-medium block text-sm'>${c.nome}</span>
+                            <span class='text-gray-500 text-[10px]'>${c.email}</span>
+                        </div>
+                        <span class='text-xs text-gray-400'>${c.cpf}</span>
+                    </div>
+                `).join('') || '<p class="text-gray-500 text-xs italic">Nenhum cliente</p>';
+
+            // Férias (simulado por enquanto)
+            const btn = document.getElementById('btn-ferias');
+            btn.innerText = modoFerias ? "MODO FÉRIAS (ATIVO)" : "MODO TRABALHO (ATIVO)";
+            btn.className = modoFerias ? 
+                "px-6 py-2 rounded-full text-[10px] font-black uppercase bg-red-600 text-white shadow-[0_0_15px_rgba(220,38,38,0.5)] hover:scale-105" : 
+                "px-6 py-2 rounded-full text-[10px] font-black uppercase bg-green-600 text-white shadow-[0_0_15px_rgba(34,197,94,0.5)] hover:scale-105";
+        }
+
+        async function toggleFerias() {
+            modoFerias = !modoFerias;
             renderAll();
+            alert(modoFerias ? '✅ Modo férias ATIVADO' : '✅ Modo trabalho ATIVADO');
+        }
+
+        function agendar() {
+            const data = document.getElementById('data-agendamento').value;
+            if (!data) return alert("Selecione uma data no calendário!");
+            
+            const txt = `Olá Thiago! Sou o cliente ${currentUser.nome} (CPF: ${currentUser.cpf}). Agendei um serviço pelo site para ${data}. Aguardo confirmação!`;
+            window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(txt)}`, '_blank');
         }
 
         function showSec(id) {
@@ -309,23 +364,9 @@
                 dateFormat: "d/m/Y H:i",
                 minDate: "today",
                 locale: "pt",
-                disable: [date => db.config.modoFerias || date.getDay() === 0 || date.getDay() === 6],
+                disable: [date => modoFerias || date.getDay() === 0 || date.getDay() === 6],
                 minTime: "08:00", maxTime: "18:00", time_24hr: true
             });
-        }
-
-        function renderAll() {
-            document.getElementById('lista-materiais').innerHTML = 
-                db.materiais.map(m => `<div class='flex justify-between p-3 bg-black/40 rounded-lg border border-gray-800'><span>${m.n}</span><span class='text-green-400'>R$ ${m.p}</span></div>`).join('') || 
-                '<p class="text-gray-500 text-xs">Sem materiais</p>';
-
-            document.getElementById('lista-clientes-adm').innerHTML = 
-                db.clientes.slice(-20).map(c => `<div class='p-2 bg-black/40 rounded border mb-1 flex justify-between'><span>${c.nome}</span><span class='text-xs'>${c.dataCad}</span></div>`).join('') || 
-                '<p class="text-gray-500 text-xs">Sem clientes</p>';
-
-            const btn = document.getElementById('btn-ferias');
-            btn.textContent = db.config.modoFerias ? 'MODO FÉRIAS' : 'MODO TRABALHO';
-            btn.className = db.config.modoFerias ? 'px-6 py-2 rounded-full text-[10px] font-black uppercase bg-red-600 shadow-lg' : 'px-6 py-2 rounded-full text-[10px] font-black uppercase bg-green-600 shadow-lg';
         }
 
         function logout() {
@@ -336,6 +377,7 @@
             document.getElementById('login-pass').value = '';
         }
 
+        // 🚀 INICIAR
         window.addEventListener('load', load);
     </script>
 </body>
