@@ -1,117 +1,50 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thiago Pires | Eletricista Profissional</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        :root { --neon: #00ff88; --bg: #0a0a0f; --card: #151520; }
-        body { background: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        .neon-text { color: var(--neon); text-shadow: 0 0 10px rgba(0, 255, 136, 0.5); }
-        .neon-border { border: 1px solid #2a2a35; transition: 0.3s; }
-        .neon-border:hover, .neon-border:focus-within { border-color: var(--neon); box-shadow: 0 0 15px rgba(0, 255, 136, 0.1); }
-        input, select { background: #1a1a25 !important; border: 1px solid #2a2a35 !important; color: white !important; outline: none; }
-        input:focus { border-color: var(--neon) !important; }
-        .btn-neon { background: var(--neon); color: black; font-weight: bold; transition: 0.3s; }
-        .btn-neon:hover { transform: scale(1.02); box-shadow: 0 0 25px var(--neon); }
-        .glass { background: rgba(21, 21, 32, 0.85); backdrop-filter: blur(12px); }
-        .hide { display: none; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thiago Pires | Eletricista Profissional</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body class="min-h-screen">
-    <!-- Navegação Superior -->
-    <nav class="p-5 border-b border-gray-800 glass sticky top-0 z-50 flex justify-between items-center">
-        <div>
-            <h1 class="font-bold text-xl neon-text tracking-tighter">THIAGO PIRES</h1>
-            <span class="text-[10px] text-gray-500 uppercase">CNPJ: 61.465.616/0001-22</span>
-        </div>
-        <div id="nav-actions">
-            <button id="btn-logout" onclick="logout()" class="hide text-xs text-red-500 border border-red-900 px-4 py-2 rounded-lg hover:bg-red-900/20">SAIR DO SISTEMA</button>
-        </div>
-    </nav>
+<body class="min-h-screen bg-gray-900 text-white">
 
-    <main class="p-6 max-w-6xl mx-auto">
-        <!-- LOGIN SECTION -->
-        <section id="sec-login" class="flex flex-col items-center py-12">
-            <div class="bg-[#151520] p-8 rounded-3xl border border-gray-800 w-full max-w-md shadow-2xl">
-                <div class="text-center mb-8">
-                    <div class="text-4xl mb-2">⚡</div>
-                    <h2 class="text-2xl font-bold neon-text">Área de Acesso</h2>
-                    <p class="text-gray-500 text-sm">Entre para agendar seus serviços</p>
-                </div>
-                <input type="email" id="login-email" placeholder="E-mail" class="w-full p-4 rounded-xl mb-4 text-sm">
-                <input type="password" id="login-pass" placeholder="Sua Senha" class="w-full p-4 rounded-xl mb-6 text-sm">
-                <button onclick="realizarLogin()" class="w-full btn-neon p-4 rounded-xl uppercase tracking-widest text-xs">ENTRAR NO PAINEL</button>
-                <p class="text-sm mt-6 text-center text-gray-400">Ainda não é cliente? <button onclick="showSec('sec-cad')" class="text-green-400 font-bold hover:underline">Cadastre-se Agora</button></p>
-            </div>
-        </section>
-        <!-- Código restante do HTML segue aqui -->
-    </main>
+  <!-- Navegação -->
+  <nav class="p-5 bg-[#151520] border-b border-gray-800">
+    <h1 class="font-bold text-xl text-green-400">Thiago Pires</h1>
+  </nav>
 
-    <script>
-        // CONFIGURAÇÕES VINCULADAS AO SEU REPOSITÓRIO
-        const GITHUB = {
-            repo: 'redkazey/eletricadothiago',
-            path: 'database.json',
-            adm: { email: 'admin@thiago22', pass: 'thiago22' } // senha: thiago22
-        };
+  <main class="p-6 max-w-6xl mx-auto">
 
-        let db = { clientes: [], agendamentos: [], materiais: [], config: { modoFerias: false } };
-        let currentUser = null;
+    <!-- Formulário de Cadastro -->
+    <section id="sec-cad" class="py-12">
+      <h2 class="text-3xl font-bold text-center text-green-400 mb-6">Cadastro de Novo Cliente</h2>
+      <input type="text" id="cad-nome" placeholder="Nome Completo" class="w-full p-4 rounded-xl mb-4 text-sm">
+      <input type="email" id="cad-email" placeholder="E-mail" class="w-full p-4 rounded-xl mb-4 text-sm">
+      <input type="password" id="cad-senha" placeholder="Sua Senha" class="w-full p-4 rounded-xl mb-4 text-sm">
+      <button onclick="salvarNovoCliente()" class="w-full bg-green-500 text-black p-4 rounded-xl">Cadastrar</button>
+    </section>
 
-        // INICIALIZAÇÃO
-        async function load() {
-            try {
-                const r = await fetch(`https://api.github.com/repos/${GITHUB.repo}/contents/${GITHUB.path}`);
-                const d = await r.json();
-                db = JSON.parse(decodeURIComponent(escape(atob(d.content))));
-                db.sha = d.sha;
-                renderAll();
-            } catch(e) { console.error("Erro ao carregar banco de dados."); }
-        }
+    <!-- Formulário de Login -->
+    <section id="sec-login" class="py-12">
+      <h2 class="text-3xl font-bold text-center text-green-400 mb-6">Área de Acesso</h2>
+      <input type="email" id="login-email" placeholder="E-mail" class="w-full p-4 rounded-xl mb-4 text-sm">
+      <input type="password" id="login-senha" placeholder="Sua Senha" class="w-full p-4 rounded-xl mb-4 text-sm">
+      <button onclick="realizarLogin()" class="w-full bg-green-500 text-black p-4 rounded-xl">Entrar</button>
+    </section>
 
-        async function sync() {
-            const content = btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2))));
-            const res = await fetch(`https://api.github.com/repos/${GITHUB.repo}/contents/${GITHUB.path}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: "Update DB", content, sha: db.sha })
-            });
-            if(res.ok) load();
-        }
+    <!-- Página do Cliente -->
+    <section id="sec-cliente" class="hidden space-y-6">
+      <div class="bg-gradient-to-r from-green-900/20 to-transparent p-8 rounded-3xl border border-green-900/30">
+        <h2 class="text-3xl font-bold">Bem-vindo, <span id="client-name" class="text-green-400"></span>!</h2>
+        <p class="text-gray-400 mt-2">Escolha abaixo o melhor horário para seu serviço elétrico.</p>
+      </div>
+      <input type="text" id="data-agendamento" class="w-full p-5 rounded-2xl mb-6 text-lg font-bold text-center" placeholder="Selecione a data">
+      <button onclick="agendar()" class="w-full bg-green-500 text-black p-5 rounded-2xl text-lg">Agendar Serviço</button>
+    </section>
+  </main>
 
-        // LOGIN
-        function realizarLogin() {
-            const e = document.getElementById('login-email').value;
-            const p = document.getElementById('login-pass').value;
-
-            // Verificação ADM
-            if(e === GITHUB.adm.email && p === GITHUB.adm.pass) {
-                showSec('sec-adm');
-                document.getElementById('btn-logout').classList.remove('hide');
-                return;
-            }
-
-            // Verificação Cliente
-            const c = db.clientes.find(u => u.email === e && u.pass === p);
-            if(c) {
-                currentUser = c;
-                document.getElementById('client-name').innerText = c.nome.split(' ')[0];
-                showSec('sec-cliente');
-                document.getElementById('btn-logout').classList.remove('hide');
-            } else { alert("E-mail ou senha incorretos!"); }
-        }
-
-        // UTILIDADES
-        function showSec(id) {
-            document.querySelectorAll('section').forEach(s => s.classList.add('hide'));
-            document.getElementById(id).classList.remove('hide');
-        }
-
-        function logout() { location.reload(); }
-
-        load();
-    </script>
+  <script src="firebase.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
