@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>[web:34][web:35]
+    <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
     <style>
         :root { --neon: #00ff88; --bg: #0a0a0f; --card: #151520; }
         body { background: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
@@ -47,4 +47,330 @@
                     <p class="text-gray-500 text-sm">Entre para agendar seus serviços</p>
                 </div>
                 <input type="email" id="login-email" placeholder="E-mail" class="w-full p-4 rounded-xl mb-4 text-sm">
-                <input type="password" id="login-pass" placeholder="Sua Senha" class="w-full p-4
+                <input type="password" id="login-pass" placeholder="Sua Senha" class="w-full p-4 rounded-xl mb-6 text-sm">
+                <button onclick="realizarLogin()" class="w-full btn-neon p-4 rounded-xl uppercase tracking-widest text-xs">ENTRAR NO PAINEL</button>
+                <p class="text-sm mt-6 text-center text-gray-400">Ainda não é cliente? <button onclick="showSec('sec-cad')" class="text-green-400 font-bold hover:underline">Cadastre-se Agora</button></p>
+            </div>
+        </section>
+
+        <!-- CADASTRO SECTION -->
+        <section id="sec-cad" class="hide">
+            <div class="bg-[#151520] p-8 rounded-3xl border border-gray-800 max-w-2xl mx-auto shadow-2xl">
+                <h2 class="text-2xl font-bold mb-6 neon-text">Cadastro de Novo Cliente</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" id="cad-nome" placeholder="Nome Completo" class="w-full p-4 rounded-xl">
+                    <input type="text" id="cad-cpf" placeholder="CPF" class="w-full p-4 rounded-xl" oninput="fCPF(this)" maxlength="14">
+                    <input type="text" id="cad-cep" placeholder="CEP" class="w-full p-4 rounded-xl" onblur="apiCEP(this.value)">
+                    <input type="email" id="cad-email" placeholder="E-mail" class="w-full p-4 rounded-xl">
+                    <input type="text" id="cad-rua" placeholder="Rua / Logradouro" class="w-full p-4 rounded-xl bg-gray-900" readonly>
+                    <input type="text" id="cad-num" placeholder="Número" class="w-full p-4 rounded-xl">
+                    <input type="text" id="cad-bairro" placeholder="Bairro" class="w-full p-4 rounded-xl bg-gray-900" readonly>
+                    <input type="password" id="cad-pass" placeholder="Crie uma Senha Forte" class="w-full p-4 rounded-xl md:col-span-2">
+                </div>
+                <button onclick="salvarNovoCliente()" class="w-full btn-neon p-4 rounded-xl mt-8 uppercase tracking-widest text-xs">FINALIZAR E ACESSAR</button>
+                <button onclick="showSec('sec-login')" class="w-full text-gray-500 mt-4 text-xs uppercase">Voltar ao Login</button>
+            </div>
+        </section>
+
+        <!-- PAINEL ADM -->
+        <section id="sec-adm" class="hide space-y-8">
+            <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <h2 class="text-3xl font-bold">Gestão <span class="neon-text">Thiago Pires</span></h2>
+                <div class="flex gap-2">
+                    <button onclick="toggleF()" id="btn-ferias" class="px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all"></button>
+                </div>
+            </header>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Coluna Materiais -->
+                <div class="bg-[#151520] p-6 rounded-2xl border border-gray-800 neon-border">
+                    <h3 class="font-bold mb-4 flex items-center gap-2 text-green-400">📦 MATERIAIS</h3>
+                    <div class="space-y-3 mb-6">
+                        <input type="text" id="adm-mat-nome" placeholder="Nome do Item" class="w-full p-3 rounded-lg text-xs">
+                        <input type="number" id="adm-mat-preco" placeholder="Preço R$" class="w-full p-3 rounded-lg text-xs" step="0.01">
+                        <button onclick="addItem('materiais')" class="w-full bg-white text-black font-bold p-2 rounded-lg text-[10px] uppercase">CADASTRAR ITEM</button>
+                    </div>
+                    <div id="lista-materiais" class="space-y-2 max-h-60 overflow-y-auto pr-2"></div>
+                </div>
+
+                <!-- Coluna Clientes -->
+                <div class="bg-[#151520] p-6 rounded-2xl border border-gray-800 neon-border">
+                    <h3 class="font-bold mb-4 text-blue-400">👥 CLIENTES</h3>
+                    <div id="lista-clientes-adm" class="space-y-2 text-xs"></div>
+                </div>
+
+                <!-- Coluna Agenda -->
+                <div class="bg-[#151520] p-6 rounded-2xl border border-gray-800 neon-border">
+                    <h3 class="font-bold mb-4 text-purple-400">📅 HISTÓRICO DE AGENDAMENTOS</h3>
+                    <div id="lista-agenda-adm" class="space-y-2 text-[10px]"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAINEL CLIENTE -->
+        <section id="sec-cliente" class="hide space-y-6">
+            <div class="bg-gradient-to-r from-green-900/20 to-transparent p-8 rounded-3xl border border-green-900/30">
+                <h2 class="text-3xl font-bold">Bem-vindo, <span id="client-name" class="neon-text"></span>!</h2>
+                <p class="text-gray-400 mt-2">Escolha abaixo o melhor horário para seu serviço elétrico.</p>
+            </div>
+
+            <div class="bg-[#151520] p-8 rounded-3xl border border-gray-800 neon-border shadow-2xl">
+                <label class="block text-sm font-bold mb-4 uppercase tracking-widest text-gray-500">Selecione Data e Hora:</label>
+                <input type="text" id="data-agendamento" class="w-full p-5 rounded-2xl mb-6 text-lg font-bold text-center" placeholder="Clique para abrir o calendário">
+                <button onclick="agendar()" class="w-full btn-neon p-5 rounded-2xl text-lg flex justify-center items-center gap-3 uppercase tracking-widest">
+                    SOLICITAR AGENDAMENTO NO WHATSAPP
+                </button>
+                <div class="mt-8 flex items-start gap-3 p-4 bg-red-900/10 border border-red-900/20 rounded-xl">
+                    <span class="text-red-500 font-bold">⚠️</span>
+                    <p class="text-[11px] text-red-200/60 leading-relaxed">
+                        <b>POLÍTICA DE CANCELAMENTO:</b> Para cancelar ou reagendar sem custos, entre em contato com pelo menos 24 horas de antecedência pelo número oficial.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // CONFIGURAÇÕES VINCULADAS AO SEU REPOSITÓRIO
+        const GITHUB = {
+            token: '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', 
+            repo: 'redkazey/eletricadothiago',
+            path: 'database.json',
+            adm: { email: 'admin@thiago22', hash: '$2a$10$N9qo8uLOickgx2ZMRZoMy.v0JpGgB2.y3B3E/L2Zq7m6.k6p6M6mC' } // senha: thiago22
+        };
+
+        let db = { clientes: [], agendamentos: [], materiais: [], config: { modoFerias: false } };
+        let currentUser = null;
+
+        // INICIALIZAÇÃO
+        async function load() {
+            try {
+                const url = `https://api.github.com/repos/${GITHUB.repo}/contents/${GITHUB.path}`;
+                const r = await fetch(url, {
+                    headers: { 
+                        'Authorization': `token ${GITHUB.token}`, 
+                        'Cache-Control': 'no-cache',
+                        'User-Agent': 'thiago-pires-site'
+                    }
+                });
+                const d = await r.json();
+                if (d.content) {
+                    db = JSON.parse(atob(d.content));
+                    db.sha = d.sha;
+                    renderAll();
+                }
+            } catch(e) { 
+                console.error("Erro ao carregar banco de dados:", e);
+                renderAll(); // Usa db vazio se falhar
+            }
+        }
+
+        async function sync() {
+            try {
+                const content = btoa(JSON.stringify(db, null, 2));
+                const url = `https://api.github.com/repos/${GITHUB.repo}/contents/${GITHUB.path}`;
+                const res = await fetch(url, {
+                    method: 'PUT',
+                    headers: { 
+                        'Authorization': `token ${GITHUB.token}`, 
+                        'Content-Type': 'application/json',
+                        'User-Agent': 'thiago-pires-site'
+                    },
+                    body: JSON.stringify({ 
+                        message: "Update DB", 
+                        content, 
+                        sha: db.sha 
+                    })
+                });
+                if (res.ok) load();
+            } catch(e) {
+                console.error("Erro ao sincronizar:", e);
+            }
+        }
+
+        // LOGIN
+        async function realizarLogin() {
+            const email = document.getElementById('login-email').value.trim();
+            const senha = document.getElementById('login-pass').value;
+
+            if (!email || !senha) return alert("Preencha e-mail e senha!");
+
+            // Verificação ADMIN
+            if (email === GITHUB.adm.email) {
+                if (bcrypt.compareSync(senha, GITHUB.adm.hash)) {
+                    showSec('sec-adm');
+                    document.getElementById('btn-logout').classList.remove('hide');
+                    return;
+                }
+            }
+
+            // Verificação CLIENTE (com hash bcrypt)
+            const cliente = db.clientes.find(c => c.email === email);
+            if (cliente && bcrypt.compareSync(senha, cliente.hash)) {
+                currentUser = cliente;
+                document.getElementById('client-name').innerText = cliente.nome.split(' ')[0];
+                showSec('sec-cliente');
+                document.getElementById('btn-logout').classList.remove('hide');
+                initCalendar();
+                return;
+            }
+
+            alert("E-mail ou senha incorretos!");
+        }
+
+        // CADASTRO CLIENTE
+        async function salvarNovoCliente() {
+            const nome = document.getElementById('cad-nome').value.trim();
+            const cpf = document.getElementById('cad-cpf').value.replace(/D/g, '');
+            const email = document.getElementById('cad-email').value.trim();
+            const pass = document.getElementById('cad-pass').value;
+            const rua = document.getElementById('cad-rua').value;
+            const num = document.getElementById('cad-num').value;
+            const bairro = document.getElementById('cad-bairro').value;
+
+            if (!nome || !cpf || !email || !pass || cpf.length !== 11) {
+                return alert("Preencha todos os campos corretamente! CPF deve ter 11 dígitos.");
+            }
+
+            if (db.clientes.find(c => c.email === email || c.cpf === cpf)) {
+                return alert("E-mail ou CPF já cadastrado!");
+            }
+
+            const hash = bcrypt.hashSync(pass, 10);
+            db.clientes.push({ 
+                nome, 
+                cpf, 
+                email, 
+                hash, 
+                rua, 
+                num, 
+                bairro,
+                dataCad: new Date().toLocaleDateString('pt-BR') 
+            });
+
+            await sync();
+            alert("Cadastro realizado com sucesso! Faça login agora.");
+            showSec('sec-login');
+            // Limpa formulário
+            document.querySelectorAll('#sec-cad input').forEach(i => i.value = '');
+        }
+
+        function agendar() {
+            const data = document.getElementById('data-agendamento').value;
+            if (!data) return alert("Por favor, selecione uma data no calendário!");
+            
+            const txt = `Olá Thiago! Sou o cliente ${currentUser.nome} (CPF: ${currentUser.cpf}). Agendei um serviço pelo site para ${data}. Aguardo confirmação!`;
+            window.open(`https://wa.me/55SEUNUMERO?text=${encodeURIComponent(txt)}`, '_blank');
+        }
+
+        // FUNÇÕES ADM
+        async function addItem(tipo) {
+            const nome = document.getElementById('adm-mat-nome').value.trim();
+            const preco = parseFloat(document.getElementById('adm-mat-preco').value);
+            if (!nome || isNaN(preco) || preco <= 0) return alert("Nome e preço válido são obrigatórios!");
+
+            db[tipo].push({ id: Date.now(), n: nome, p: preco.toFixed(2) });
+            await sync();
+            document.getElementById('adm-mat-nome').value = '';
+            document.getElementById('adm-mat-preco').value = '';
+        }
+
+        async function toggleF() {
+            db.config.modoFerias = !db.config.modoFerias;
+            await sync();
+            renderAll();
+        }
+
+        // UTILITÁRIOS
+        function showSec(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hide'));
+            document.getElementById(id).classList.remove('hide');
+        }
+
+        function fCPF(input) {
+            let valor = input.value.replace(/D/g, "");
+            valor = valor.replace(/(d{3})(d)/, "$1.$2");
+            valor = valor.replace(/(d{3})(d)/, "$1.$2");
+            valor = valor.replace(/(d{3})(d{1,2})$/, "$1-$2");
+            input.value = valor;
+        }
+
+        async function apiCEP(cep) {
+            if (cep.replace(/D/g, '').length !== 8) return;
+            try {
+                const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const dados = await res.json();
+                if (!dados.erro) {
+                    document.getElementById('cad-rua').value = dados.logradouro;
+                    document.getElementById('cad-bairro').value = dados.bairro;
+                } else {
+                    alert("CEP não encontrado!");
+                }
+            } catch(e) {
+                alert("Erro ao consultar CEP!");
+            }
+        }
+
+        function initCalendar() {
+            flatpickr("#data-agendamento", {
+                enableTime: true,
+                dateFormat: "d/m/Y H:i",
+                minDate: "today",
+                locale: "pt",
+                disable: [
+                    function(date) { 
+                        return db.config.modoFerias || date.getDay() === 0 || date.getDay() === 6; 
+                    }
+                ],
+                minTime: "08:00", 
+                maxTime: "18:00",
+                time_24hr: true
+            });
+        }
+
+        function renderAll() {
+            // Render Materiais
+            document.getElementById('lista-materiais').innerHTML = 
+                db.materiais.map(m => `
+                    <div class='flex justify-between items-center p-3 bg-black/40 rounded-lg border border-gray-800 hover:bg-gray-800/50'>
+                        <span class='text-sm'>${m.n}</span>
+                        <span class='text-green-400 font-bold text-xs'>R$ ${parseFloat(m.p).toFixed(2)}</span>
+                    </div>
+                `).join('') || '<p class="text-gray-500 text-xs italic">Nenhum material cadastrado</p>';
+            
+            // Render Clientes (últimos 50)
+            const clientesHTML = db.clientes.slice(-50).map(c => `
+                <div class='p-3 bg-black/40 rounded-lg border border-gray-800 mb-2 flex justify-between items-center hover:bg-gray-800/50'>
+                    <div>
+                        <span class='font-medium block'>${c.nome}</span>
+                        <span class='text-gray-500 text-[10px]'>${c.email}</span>
+                    </div>
+                    <span class='text-xs text-gray-400'>${c.dataCad || ''}</span>
+                </div>
+            `).join('');
+            document.getElementById('lista-clientes-adm').innerHTML = clientesHTML || '<p class="text-gray-500 text-xs italic">Nenhum cliente</p>';
+            
+            // Botão Férias
+            const btn = document.getElementById('btn-ferias');
+            if (db.config.modoFerias) {
+                btn.innerText = "MODO FÉRIAS (ATIVO)";
+                btn.className = "px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-wider bg-red-600 text-white shadow-[0_0_15px_rgba(220,38,38,0.5)] hover:scale-105";
+            } else {
+                btn.innerText = "MODO TRABALHO (ATIVO)";
+                btn.className = "px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-wider bg-green-600 text-white shadow-[0_0_15px_rgba(34,197,94,0.5)] hover:scale-105";
+            }
+        }
+
+        function logout() { 
+            currentUser = null;
+            document.getElementById('btn-logout').classList.add('hide');
+            showSec('sec-login');
+            document.getElementById('login-email').value = '';
+            document.getElementById('login-pass').value = '';
+        }
+
+        // Inicialização
+        window.addEventListener('load', load);
+    </script>
+</body>
+</html>
