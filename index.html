@@ -25,7 +25,7 @@
 </head>
 <body class="min-h-screen">
 
-    <!-- Navegação Superior -->
+    <!-- NAVEGAÇÃO -->
     <nav class="p-5 border-b border-gray-800 glass sticky top-0 z-50 flex justify-between items-center">
         <div>
             <h1 class="font-bold text-xl neon-text tracking-tighter">THIAGO PIRES</h1>
@@ -38,7 +38,7 @@
 
     <main class="p-6 max-w-6xl mx-auto">
 
-        <!-- LOGIN SECTION -->
+        <!-- 🟢 TELA 1: LOGIN -->
         <section id="sec-login" class="flex flex-col items-center py-12">
             <div class="bg-[#151520] p-8 rounded-3xl border border-gray-800 w-full max-w-md shadow-2xl">
                 <div class="text-center mb-8">
@@ -53,7 +53,7 @@
             </div>
         </section>
 
-        <!-- CADASTRO SECTION -->
+        <!-- 🟡 TELA 2: CADASTRO -->
         <section id="sec-cad" class="hide">
             <div class="bg-[#151520] p-8 rounded-3xl border border-gray-800 max-w-2xl mx-auto shadow-2xl">
                 <h2 class="text-2xl font-bold mb-6 neon-text">Cadastro de Novo Cliente</h2>
@@ -62,275 +62,223 @@
                     <input type="text" id="cad-cpf" placeholder="CPF" class="w-full p-4 rounded-xl" oninput="fCPF(this)" maxlength="14">
                     <input type="text" id="cad-cep" placeholder="CEP" class="w-full p-4 rounded-xl" onblur="apiCEP(this.value)">
                     <input type="email" id="cad-email" placeholder="E-mail" class="w-full p-4 rounded-xl">
-                    <input type="text" id="cad-rua" placeholder="Rua / Logradouro" class="w-full p-4 rounded-xl bg-gray-900" readonly>
+                    <input type="text" id="cad-rua" placeholder="Rua" class="w-full p-4 rounded-xl bg-gray-900" readonly>
                     <input type="text" id="cad-num" placeholder="Número" class="w-full p-4 rounded-xl">
                     <input type="text" id="cad-bairro" placeholder="Bairro" class="w-full p-4 rounded-xl bg-gray-900" readonly>
-                    <input type="password" id="cad-pass" placeholder="Crie uma Senha Forte" class="w-full p-4 rounded-xl md:col-span-2">
+                    <input type="password" id="cad-pass" placeholder="Senha" class="w-full p-4 rounded-xl md:col-span-2">
                 </div>
-                <button onclick="salvarNovoCliente()" class="w-full btn-neon p-4 rounded-xl mt-8 uppercase tracking-widest text-xs">FINALIZAR E ACESSAR</button>
-                <button onclick="showSec('sec-login')" class="w-full text-gray-500 mt-4 text-xs uppercase">Voltar ao Login</button>
+                <button onclick="salvarNovoCliente()" class="w-full btn-neon p-4 rounded-xl mt-8 uppercase tracking-widest text-xs">FINALIZAR CADASTRO</button>
+                <button onclick="showSec('sec-login')" class="w-full text-gray-500 mt-4 text-xs uppercase">← VOLTAR LOGIN</button>
             </div>
         </section>
 
-        <!-- PAINEL ADM -->
+        <!-- 🔴 TELA 3: PAINEL ADMIN (APENAS ADMIN) -->
         <section id="sec-adm" class="hide space-y-8">
             <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <h2 class="text-3xl font-bold">Gestão <span class="neon-text">Thiago Pires</span></h2>
-                <div class="flex gap-2">
-                    <button onclick="toggleFerias()" id="btn-ferias" class="px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all"></button>
-                </div>
+                <button onclick="toggleFerias()" id="btn-ferias" class="px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-tighter"></button>
             </header>
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- MATERIAIS -->
                 <div class="bg-[#151520] p-6 rounded-2xl border border-gray-800 neon-border">
                     <h3 class="font-bold mb-4 flex items-center gap-2 text-green-400">📦 MATERIAIS</h3>
                     <div class="space-y-3 mb-6">
-                        <input type="text" id="adm-mat-nome" placeholder="Nome do Item" class="w-full p-3 rounded-lg text-xs">
+                        <input type="text" id="adm-mat-nome" placeholder="Nome Item" class="w-full p-3 rounded-lg text-xs">
                         <input type="number" id="adm-mat-preco" placeholder="Preço R$" class="w-full p-3 rounded-lg text-xs" step="0.01">
-                        <button onclick="addMaterial()" class="w-full bg-white text-black font-bold p-2 rounded-lg text-[10px] uppercase">CADASTRAR ITEM</button>
+                        <button onclick="addMaterial()" class="w-full bg-white text-black font-bold p-2 rounded-lg text-[10px] uppercase">+ CADASTRAR</button>
                     </div>
                     <div id="lista-materiais" class="space-y-2 max-h-60 overflow-y-auto pr-2"></div>
                 </div>
+                <!-- CLIENTES -->
                 <div class="bg-[#151520] p-6 rounded-2xl border border-gray-800 neon-border">
-                    <h3 class="font-bold mb-4 text-blue-400">👥 CLIENTES</h3>
+                    <h3 class="font-bold mb-4 text-blue-400">👥 CLIENTES (Total: <span id="total-clientes">0</span>)</h3>
                     <div id="lista-clientes-adm" class="space-y-2 text-xs"></div>
                 </div>
+                <!-- HISTÓRICO -->
                 <div class="bg-[#151520] p-6 rounded-2xl border border-gray-800 neon-border">
-                    <h3 class="font-bold mb-4 text-purple-400">📅 HISTÓRICO</h3>
-                    <div id="lista-agenda-adm" class="space-y-2 text-[10px]">Sem agendamentos</div>
+                    <h3 class="font-bold mb-4 text-purple-400">📅 AGENDAMENTOS</h3>
+                    <div id="lista-agenda-adm" class="space-y-2 text-[10px] max-h-60 overflow-y-auto"></div>
                 </div>
             </div>
         </section>
 
-        <!-- PAINEL CLIENTE -->
+        <!-- 🟣 TELA 4: PAINEL CLIENTE (APENAS CLIENTES) -->
         <section id="sec-cliente" class="hide space-y-6">
             <div class="bg-gradient-to-r from-green-900/20 to-transparent p-8 rounded-3xl border border-green-900/30">
-                <h2 class="text-3xl font-bold">Bem-vindo, <span id="client-name" class="neon-text"></span>!</h2>
-                <p class="text-gray-400 mt-2">Escolha abaixo o melhor horário para seu serviço elétrico.</p>
+                <h2 class="text-3xl font-bold">Olá, <span id="client-name" class="neon-text"></span>!</h2>
+                <p class="text-gray-400 mt-2">Agende seu serviço elétrico abaixo:</p>
             </div>
             <div class="bg-[#151520] p-8 rounded-3xl border border-gray-800 neon-border shadow-2xl">
-                <label class="block text-sm font-bold mb-4 uppercase tracking-widest text-gray-500">Selecione Data e Hora:</label>
-                <input type="text" id="data-agendamento" class="w-full p-5 rounded-2xl mb-6 text-lg font-bold text-center" placeholder="Clique para abrir o calendário">
+                <label class="block text-sm font-bold mb-4 uppercase tracking-widest text-gray-500">Data e Hora:</label>
+                <input type="text" id="data-agendamento" class="w-full p-5 rounded-2xl mb-6 text-lg font-bold text-center" placeholder="Clique para calendário">
                 <button onclick="agendar()" class="w-full btn-neon p-5 rounded-2xl text-lg flex justify-center items-center gap-3 uppercase tracking-widest">
-                    SOLICITAR AGENDAMENTO NO WHATSAPP
+                    📱 WHATSAPP AGENDAR
                 </button>
-                <div class="mt-8 flex items-start gap-3 p-4 bg-red-900/10 border border-red-900/20 rounded-xl">
+                <div class="mt-8 p-4 bg-red-900/10 border border-red-900/20 rounded-xl">
                     <span class="text-red-500 font-bold">⚠️</span>
-                    <p class="text-[11px] text-red-200/60 leading-relaxed">
-                        <b>POLÍTICA DE CANCELAMENTO:</b> Para cancelar ou reagendar sem custos, entre em contato com pelo menos 24 horas de antecedência pelo número oficial.
-                    </p>
+                    <p class="text-[11px] text-red-200/80 mt-2">Cancelamento: 24h antes sem custo.</p>
                 </div>
             </div>
         </section>
     </main>
 
     <script>
-        // ✅ SEUS DADOS NOTION (100% CONFIGURADO!)
-        const NOTION = {
-            token: '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',
-            db_clientes: '2f72f2c3e7db80cbbcd1f7cf4df3b6cd',
-            db_materiais: '2f72f2c3e7db8059a121fe1140162cf2',
-            db_config: '2f72f2c3e7db80fb80fae6cf9ee811d3'
+        // CONFIG
+        const WHATSAPP_PHONE = '5521987409682';
+        const ADMIN = { 
+            email: 'admin@thiago22.com', 
+            hash: '$2a$10$8zX5rV6kP3mW9qY2tB7nJuecF8dG0hI1jK2lM3nO4pQ5rS6tU7vW' // thiago22 ✅
         };
+        
+        let clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+        let materiais = JSON.parse(localStorage.getItem('materiais')) || [
+            {n: 'Caixa Papelão 30x40cm', p: 15.50},
+            {n: 'Aço inox 304', p: 45.00},
+            {n: 'Parafuso M20mm', p: 2.80}
+        ];
+        let modoFerias = localStorage.getItem('modoFerias') === 'true';
+        let currentUser = null;
+        let historico = JSON.parse(localStorage.getItem('historico')) || [];
 
-        const WHATSAPP_PHONE = '5521987409682'; // +55 21 98740-9682
-        const ADMIN = { email: 'admin@thiago22', hash: '$2a$10$N9qo8uLOickgx2ZMRZoMy.v0JpGgB2.y3B3E/L2Zq7m6.k6p6M6mC' };
-
-        let clientes = [], materiais = [], modoFerias = false, currentUser = null;
-
-        // 🔥 NOTION API
-        async function notionQuery(databaseId) {
-            try {
-                const res = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${NOTION.token}`,
-                        'Content-Type': 'application/json',
-                        'Notion-Version': '2022-06-28'
-                    }
-                });
-                return await res.json();
-            } catch(e) {
-                console.error('Notion query error:', e);
-                return { results: [] };
-            }
+        // SALVAR
+        function saveData() {
+            localStorage.setItem('clientes', JSON.stringify(clientes));
+            localStorage.setItem('materiais', JSON.stringify(materiais));
+            localStorage.setItem('modoFerias', modoFerias);
+            localStorage.setItem('historico', JSON.stringify(historico));
         }
 
-        async function notionCreate(databaseId, properties) {
-            try {
-                const res = await fetch(`https://api.notion.com/v1/pages`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${NOTION.token}`,
-                        'Content-Type': 'application/json',
-                        'Notion-Version': '2022-06-28'
-                    },
-                    body: JSON.stringify({
-                        parent: { database_id: databaseId },
-                        properties
-                    })
-                });
-                return res.ok;
-            } catch(e) {
-                console.error('Notion create error:', e);
-                return false;
-            }
-        }
-
-        // 🚀 LOAD
-        async function load() {
-            console.log('🔄 Carregando Notion...');
+        // 🔄 RENDER
+        function renderAll() {
+            document.getElementById('total-clientes').textContent = clientes.length;
             
-            // Clientes
-            const clientesRes = await notionQuery(NOTION.db_clientes);
-            clientes = clientesRes.results
-                .map(p => ({
-                    id: p.id,
-                    nome: p.properties.Name?.title[0]?.plain_text || '',
-                    email: p.properties.Email?.email || '',
-                    cpf: p.properties.CPF?.rich_text[0]?.plain_text || '',
-                    hash: p.properties.Senha?.rich_text[0]?.plain_text || ''
-                }))
-                .filter(c => c.nome && c.email);
+            // MATERIAIS
+            document.getElementById('lista-materiais').innerHTML = 
+                materiais.map(m => `
+                    <div class='flex justify-between p-3 bg-black/40 rounded-lg border border-gray-800 hover:bg-gray-800/50'>
+                        <span class='text-sm'>${m.n}</span>
+                        <span class='text-green-400 font-bold text-xs'>R$ ${m.p.toFixed(2)}</span>
+                    </div>
+                `).join('') || '<p class="text-gray-500 italic">Sem materiais</p>';
 
-            // Materiais
-            const materiaisRes = await notionQuery(NOTION.db_materiais);
-            materiais = materiaisRes.results
-                .map(p => ({
-                    id: p.id,
-                    n: p.properties.Name?.title[0]?.plain_text || '',
-                    p: p.properties.Preço?.number || 0
-                }))
-                .filter(m => m.n);
+            // CLIENTES
+            document.getElementById('lista-clientes-adm').innerHTML = 
+                clientes.slice(-10).map(c => `
+                    <div class='p-3 bg-black/40 rounded-lg border border-gray-800 mb-2 flex justify-between hover:bg-gray-800/50'>
+                        <div>
+                            <span class='font-medium text-sm'>${c.nome}</span>
+                            <span class='text-gray-500 text-[10px] block'>${c.email}</span>
+                        </div>
+                        <span class='text-xs text-gray-400'>${c.cpf}</span>
+                    </div>
+                `).join('') || '<p class="text-gray-500 italic">Sem clientes</p>';
 
-            console.log('✅ Notion carregado:', { clientes: clientes.length, materiais: materiais.length });
-            renderAll();
+            // HISTÓRICO
+            document.getElementById('lista-agenda-adm').innerHTML = 
+                historico.slice(0, 10).map(h => `
+                    <div class='p-3 bg-black/30 rounded-lg border border-purple-800 text-[10px]'>
+                        ${h.cliente} → ${h.data} <span class='text-purple-400'>${h.timestamp}</span>
+                    </div>
+                `).join('') || '<p class="text-gray-500 italic">Sem agendamentos</p>';
+
+            // FÉRIAS
+            const btn = document.getElementById('btn-ferias');
+            btn.textContent = modoFerias ? 'FÉRIAS ATIVO' : 'TRABALHO ATIVO';
+            btn.className = modoFerias ? 
+                'px-6 py-2 rounded-full text-[10px] font-black uppercase bg-red-600 text-white shadow-red-500/50 hover:scale-105' : 
+                'px-6 py-2 rounded-full text-[10px] font-black uppercase bg-green-600 text-white shadow-green-500/50 hover:scale-105';
         }
 
         // LOGIN
-        async function realizarLogin() {
-            const email = document.getElementById('login-email').value.trim();
+        function realizarLogin() {
+            const email = document.getElementById('login-email').value.trim().toLowerCase();
             const senha = document.getElementById('login-pass').value;
 
-            // ADMIN (funciona offline)
+            // ADMIN → PAINEL GESTÃO
             if (email === ADMIN.email && bcrypt.compareSync(senha, ADMIN.hash)) {
-                console.log('🎉 ADMIN LOGIN');
+                console.log('✅ ADMIN LOGIN → sec-adm');
                 showSec('sec-adm');
                 document.getElementById('btn-logout').classList.remove('hide');
-                load(); // Carrega painéis
+                renderAll();
                 return;
             }
 
-            // CLIENTE
-            const cliente = clientes.find(c => c.email === email);
+            // CLIENTE → PAINEL CLIENTE
+            const cliente = clientes.find(c => c.email.toLowerCase() === email);
             if (cliente && bcrypt.compareSync(senha, cliente.hash)) {
-                console.log('🎉 CLIENTE LOGIN');
+                console.log('✅ CLIENTE LOGIN → sec-cliente');
                 currentUser = cliente;
-                document.getElementById('client-name').innerText = cliente.nome.split(' ')[0];
+                document.getElementById('client-name').textContent = cliente.nome.split(' ')[0];
                 showSec('sec-cliente');
                 document.getElementById('btn-logout').classList.remove('hide');
                 initCalendar();
                 return;
             }
 
-            alert('E-mail ou senha incorretos!');
+            alert('❌ Email ou senha incorretos!');
         }
 
-        // CADASTRO
-        async function salvarNovoCliente() {
+        // CADASTRO → VOLTAR LOGIN
+        function salvarNovoCliente() {
             const nome = document.getElementById('cad-nome').value.trim();
             const cpf = document.getElementById('cad-cpf').value.replace(/D/g, '');
             const email = document.getElementById('cad-email').value.trim();
             const pass = document.getElementById('cad-pass').value;
 
-            if (!nome || cpf.length !== 11 || !email || !pass) {
-                return alert('Preencha todos os campos corretamente!');
+            if (!nome || cpf.length !== 11 || !email || !pass || pass.length < 4) {
+                return alert('❌ Preencha tudo corretamente!');
             }
 
-            if (clientes.find(c => c.email === email || c.cpf === cpf)) {
-                return alert('E-mail ou CPF já cadastrado!');
+            if (clientes.find(c => c.email.toLowerCase() === email.toLowerCase() || c.cpf === cpf)) {
+                return alert('❌ Email ou CPF já existe!');
             }
 
             const hash = bcrypt.hashSync(pass, 10);
-            const ok = await notionCreate(NOTION.db_clientes, {
-                Name: { title: [{ text: { content: nome } }] },
-                Email: { email },
-                CPF: { rich_text: [{ text: { content: cpf } }] },
-                Senha: { rich_text: [{ text: { content: hash } }] }
+            clientes.push({
+                id: Date.now(),
+                nome, email: email.toLowerCase(), cpf, hash,
+                rua: document.getElementById('cad-rua').value,
+                num: document.getElementById('cad-num').value,
+                bairro: document.getElementById('cad-bairro').value
             });
 
-            if (ok) {
-                alert('✅ Cadastro realizado! Faça login.');
-                showSec('sec-login');
-                document.querySelectorAll('#sec-cad input').forEach(i => i.value = '');
-                load();
-            } else {
-                alert('❌ Erro no cadastro. Tente novamente.');
-            }
+            saveData();
+            alert('✅ Cadastro OK! Faça login.');
+            showSec('sec-login');
+            document.querySelectorAll('#sec-cad input').forEach(i => i.value = '');
         }
 
         // MATERIAIS
-        async function addMaterial() {
+        function addMaterial() {
             const nome = document.getElementById('adm-mat-nome').value.trim();
             const preco = parseFloat(document.getElementById('adm-mat-preco').value);
+            if (!nome || !preco || preco <= 0) return alert('❌ Dados inválidos!');
             
-            if (!nome || !preco || preco <= 0) {
-                return alert('Nome e preço válidos obrigatórios!');
-            }
-
-            const ok = await notionCreate(NOTION.db_materiais, {
-                Name: { title: [{ text: { content: nome } }] },
-                Preço: { number: preco }
-            });
-
-            if (ok) {
-                document.getElementById('adm-mat-nome').value = '';
-                document.getElementById('adm-mat-preco').value = '';
-                load();
-            }
-        }
-
-        function renderAll() {
-            // Materiais
-            document.getElementById('lista-materiais').innerHTML = 
-                materiais.map(m => `
-                    <div class='flex justify-between items-center p-3 bg-black/40 rounded-lg border border-gray-800 hover:bg-gray-800/50'>
-                        <span class='text-sm'>${m.n}</span>
-                        <span class='text-green-400 font-bold text-xs'>R$ ${m.p.toFixed(2)}</span>
-                    </div>
-                `).join('') || '<p class="text-gray-500 text-xs italic">Nenhum material cadastrado</p>';
-
-            // Clientes
-            document.getElementById('lista-clientes-adm').innerHTML = 
-                clientes.slice(-10).map(c => `
-                    <div class='p-3 bg-black/40 rounded-lg border border-gray-800 mb-2 flex justify-between items-center hover:bg-gray-800/50'>
-                        <div>
-                            <span class='font-medium block text-sm'>${c.nome}</span>
-                            <span class='text-gray-500 text-[10px]'>${c.email}</span>
-                        </div>
-                        <span class='text-xs text-gray-400'>${c.cpf}</span>
-                    </div>
-                `).join('') || '<p class="text-gray-500 text-xs italic">Nenhum cliente</p>';
-
-            // Férias (simulado por enquanto)
-            const btn = document.getElementById('btn-ferias');
-            btn.innerText = modoFerias ? "MODO FÉRIAS (ATIVO)" : "MODO TRABALHO (ATIVO)";
-            btn.className = modoFerias ? 
-                "px-6 py-2 rounded-full text-[10px] font-black uppercase bg-red-600 text-white shadow-[0_0_15px_rgba(220,38,38,0.5)] hover:scale-105" : 
-                "px-6 py-2 rounded-full text-[10px] font-black uppercase bg-green-600 text-white shadow-[0_0_15px_rgba(34,197,94,0.5)] hover:scale-105";
-        }
-
-        async function toggleFerias() {
-            modoFerias = !modoFerias;
+            materiais.push({id: Date.now(), n: nome, p: preco});
+            saveData();
+            document.getElementById('adm-mat-nome').value = '';
+            document.getElementById('adm-mat-preco').value = '';
             renderAll();
-            alert(modoFerias ? '✅ Modo férias ATIVADO' : '✅ Modo trabalho ATIVADO');
+        }
+
+        // FLUXOS
+        function toggleFerias() {
+            modoFerias = !modoFerias;
+            saveData();
+            renderAll();
+            alert(modoFerias ? '✅ Férias ATIVADAS' : '✅ Trabalho ATIVO');
         }
 
         function agendar() {
             const data = document.getElementById('data-agendamento').value;
-            if (!data) return alert("Selecione uma data no calendário!");
+            if (!data) return alert('❌ Escolha data/hora!');
             
-            const txt = `Olá Thiago! Sou o cliente ${currentUser.nome} (CPF: ${currentUser.cpf}). Agendei um serviço pelo site para ${data}. Aguardo confirmação!`;
-            window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(txt)}`, '_blank');
+            const msg = `Olá Thiago! ${currentUser.nome} (CPF: ${currentUser.cpf}) quer agendar para ${data}`;
+            window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
+            
+            historico.unshift({cliente: currentUser.nome, data, timestamp: new Date().toLocaleString('pt-BR')});
+            saveData();
+            alert('✅ WhatsApp enviado!');
         }
 
         function showSec(id) {
@@ -377,8 +325,7 @@
             document.getElementById('login-pass').value = '';
         }
 
-        // 🚀 INICIAR
-        window.addEventListener('load', load);
+        window.addEventListener('load', renderAll);
     </script>
 </body>
 </html>
